@@ -1,0 +1,166 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+AUTHOR	mesh.py	/^AUTHOR = "mahe.perrette@pik-potsdam.de"$/;"	v
+CRESIS_DIR	greenland_data/cresis.py	/^CRESIS_DIR = os.path.join(datadir, "BasalTopographyCresis\/")$/;"	v
+CRS	greenmap.py	/^CRS = get_crs(MAPPING) # coordinate system $/;"	v
+CRS_RM2012	flowline.py	/^CRS_RM2012 = get_crs(MAPPING_RM2012)$/;"	v
+CRS_SD	flowline.py	/^CRS_SD = get_crs(MAPPING_SD)$/;"	v
+DATASET	greenland_data/elevation.py	/^DATASET = 'bamber2013'$/;"	v
+DATASET	greenland_data/velocity.py	/^DATASET = 'joughin2010'$/;"	v
+DATASET_VELOCITY	greenland_data/data.py	/^DATASET_VELOCITY = 'joughin2010'$/;"	v
+DATASET_VELOCITY	greenland_data/data.py	/^DATASET_VELOCITY = 'rignot_mouginot2012'$/;"	v
+ExtractLinearGridData	geometry.py	/^class ExtractLinearGridData(object):$/;"	c
+GLACIER	greenland_data/outlet_glacier_region.py	/^GLACIER = None$/;"	v
+Line	geometry.py	/^class Line(object):$/;"	c
+MAPPING	greenland_data/bamber2013.py	/^MAPPING = {'ellipsoid': u'WGS84',$/;"	v
+MAPPING	greenland_data/cresis.py	/^MAPPING = {'ellipsoid': u'WGS84',$/;"	v
+MAPPING	greenland_data/morlighem2014.py	/^MAPPING = {'ellipsoid': u'WGS84',$/;"	v
+MAPPING	greenland_data/rignot_mouginot2012.py	/^MAPPING = {'ellipsoid': u'WGS84',$/;"	v
+MAPPING	greenland_data/standard_dataset.py	/^MAPPING = {'ellipsoid': u'WGS84',$/;"	v
+MAPPING_CRESIS	greenland_data/outlet_glacier_region.py	/^MAPPING_CRESIS = cresis.MAPPING$/;"	v
+NCFILE	greenland_data/bamber2013.py	/^NCFILE = os.path.join(datadir, 'bamber_2013_1km','Greenland_bedrock_topography_V3.nc')$/;"	v
+NCFILE	greenland_data/morlighem2014.py	/^NCFILE = os.path.join(datadir, "MCdataset-2014-10-16-y-inverted.nc")$/;"	v
+NCFILE	greenland_data/rignot_mouginot2012.py	/^NCFILE = os.path.join(datadir, "Rignot_Mouginot_2012_IceFlowGreenlandPolarYear20082009","velocity_greenland_15Feb2013.nc")$/;"	v
+NCFILE	greenland_data/standard_dataset.py	/^NCFILE = _NCFILE.format(VERSION=VERSION)$/;"	v
+PARAMS	flowline.py	/^PARAMS = dict($/;"	v
+Point	geometry.py	/^class Point(object):$/;"	c
+Segment	geometry.py	/^class Segment(object):$/;"	c
+StraightLine	geometry.py	/^class StraightLine(object):$/;"	c
+TODAY	mesh.py	/^TODAY = datetime.date.today().strftime("%Y%m%d")$/;"	v
+VERSION	greenland_data/standard_dataset.py	/^VERSION = 'v1.1'$/;"	v
+Vector	geometry.py	/^class Vector(object):$/;"	c
+WORK	mesh.py	/^WORK = 'work' # work directory$/;"	v
+ZOOM	greenland_data/outlet_glacier_region.py	/^ZOOM = 150e3$/;"	v
+_NCFILE	greenland_data/standard_dataset.py	/^_NCFILE = os.path.join(datadir, "Present_Day_Greenland", 'Greenland_5km_{VERSION}.nc')$/;"	v
+__add__	geometry.py	/^    def __add__(self, v):$/;"	m	class:Point	file:
+__all__	greenland_data/cresis.py	/^__all__ = ['load','load_error', 'variables','help']$/;"	v
+__call__	flowline.py	/^    def __call__(self, x, y, **kwargs):$/;"	m	class:nanSplineBase	file:
+__eq__	geometry.py	/^    def __eq__(self, pt):$/;"	m	class:Point	file:
+__eq__	geometry.py	/^    def __eq__(self, seg):$/;"	m	class:Segment	file:
+__init__	flowline.py	/^    def __init__(self, *args, **kwargs):$/;"	m	class:nanSplineBase
+__init__	geometry.py	/^    def __init__(self, list_of_points = None):$/;"	m	class:Line
+__init__	geometry.py	/^    def __init__(self, pt1, pt2):$/;"	m	class:Segment
+__init__	geometry.py	/^    def __init__(self, pt1, pt2):$/;"	m	class:StraightLine
+__init__	geometry.py	/^    def __init__(self, pts, xdata, ydata, method='nearest neighbor', auto=True):$/;"	m	class:ExtractLinearGridData
+__init__	geometry.py	/^    def __init__(self, x, y):$/;"	m	class:Point
+__init__	geometry.py	/^    def __init__(self, x, y):$/;"	m	class:Vector
+__mul__	geometry.py	/^    def __mul__(self, x):$/;"	m	class:Vector	file:
+__repr__	geometry.py	/^    def __repr__(self):$/;"	m	class:Point	file:
+__repr__	geometry.py	/^    def __repr__(self):$/;"	m	class:Segment	file:
+__repr__	geometry.py	/^    def __repr__(self):$/;"	m	class:StraightLine	file:
+__repr__	geometry.py	/^    def __repr__(self):$/;"	m	class:Vector	file:
+_call	flowline.py	/^    _call = RectBivariateSpline.__call__$/;"	v	class:naninterpReg
+_call	flowline.py	/^    _call = interp2d.__call__$/;"	v	class:naninterp2d
+_cresis_to_standard	greenland_data/outlet_glacier_region.py	/^def _cresis_to_standard(xc, yc):$/;"	f
+_drift	flowline.py	/^def _drift(x0, y0, fx, fy, dx, sign = 1, maxstep = 10000, stopcond=None, straightness=0):$/;"	f
+_extract_indices	geometry.py	/^    def _extract_indices(self):$/;"	m	class:ExtractLinearGridData
+_extract_indices_nn	geometry.py	/^    def _extract_indices_nn(pts, xdata, ydata, error=True):$/;"	m	class:ExtractLinearGridData
+_get_glacier_bbox	mesh.py	/^def _get_glacier_bbox(glacier_grid):$/;"	f
+_init	flowline.py	/^    _init = RectBivariateSpline.__init__$/;"	v	class:naninterpReg
+_init	flowline.py	/^    _init = interp2d.__init__$/;"	v	class:naninterp2d
+_load_data	greenmap.py	/^def _load_data(coords, variable, dataset=None, zoom=None):$/;"	f
+_prepare_load_prj	mesh.py	/^def _prepare_load_prj(glacier_grid, crs_disk, crs_target):$/;"	f
+_strip_bd	greenland_data/outlet_glacier_region.py	/^def _strip_bd(nm): $/;"	f
+append	geometry.py	/^    def append(self, pt):$/;"	m	class:Line
+array	geometry.py	/^    def array(self):$/;"	m	class:Line
+compare_evelation_datasets	greenland_data/data.py	/^def compare_evelation_datasets(name, v='z', datasets = none, ref=none, crange=none, sub=none, data=none):$/;"	f
+compute_one_flowline	flowline.py	/^def compute_one_flowline(x0, y0, **kwargs):$/;"	f
+copy	geometry.py	/^    def copy(self):$/;"	m	class:Line
+datadir	greenland_data/boxdecker2011/read_data.py	/^datadir = dirname(abspath(__file__))+'\/'$/;"	v
+datadir	greenland_data/config.py	/^datadir = os.path.join(home, 'data','greenland')$/;"	v
+datadir	greenland_data/rignot_mouginot2012.py	/^    datadir = ''$/;"	v
+dataset	flowline.py	/^    dataset = 'rignot_mouginot2012',$/;"	v
+distance	geometry.py	/^    def distance(self):$/;"	m	class:Line
+distance	geometry.py	/^    def distance(self, pt):$/;"	m	class:Point
+draw_boxdecker2011	greenland_data/outlet_glacier_region.py	/^def draw_boxdecker2011(name, ax=None, crs=None):$/;"	f
+draw_orthogonal	geometry.py	/^    def draw_orthogonal(self, pt):$/;"	m	class:Segment
+draw_orthogonal	geometry.py	/^    def draw_orthogonal(self, x):$/;"	m	class:Line
+drift_from_point	flowline.py	/^def drift_from_point(pt0, x1d, y1d, fx, fy, ds, vmin = 10, maxdist=500000, straightness=0):$/;"	f
+drift_from_section	flowline.py	/^def drift_from_section(line, x1d, y1d, vx, vy, ds, dxs, vmin = 10, maxdist=500000, straightness=0, plot=False, axes=None):$/;"	f
+dx	flowline.py	/^    dx = 0.3,			# along-flow grid step$/;"	v
+dy	flowline.py	/^    dy = 0.5, 			# discretization at the mouth (cross-section)$/;"	v
+errors	geometry.py	/^	errors = [] # indicate the error as distance from the correct grid point$/;"	v	class:ExtractLinearGridData
+extract	geometry.py	/^    def extract(self, zdata):$/;"	m	class:ExtractLinearGridData
+extractglacier1d	mesh.py	/^def extractglacier1d(glacier_grid, datasets):$/;"	f
+fromPoints	geometry.py	/^    def fromPoints(pt1, pt2):$/;"	m	class:Vector
+from_array	geometry.py	/^    def from_array(cls, x, y):$/;"	m	class:Line
+fun2	helper.py	/^    def fun2(*args, **kwargs):$/;"	f	function:keepincache
+get_boxdecker2011	greenland_data/outlet_glacier_region.py	/^def get_boxdecker2011(name):$/;"	f
+get_col	greenland_data/boxdecker2011/read_data.py	/^    def get_col(w):$/;"	f	function:main
+get_coords	greenmap.py	/^def get_coords(nm):$/;"	f
+get_dict_data	greenmap.py	/^def get_dict_data(variable, dataset, coords, zoom=300e3):$/;"	f
+get_fname	greenland_data/cresis.py	/^def get_fname(name, kind='grids'):$/;"	f
+get_id_for_dict	helper.py	/^    def get_id_for_dict(dict_):$/;"	f	function:keepincache
+get_json_data	greenmap.py	/^def get_json_data(*args, **kwargs):$/;"	f
+get_region	greenland_data/outlet_glacier_region.py	/^def get_region(glacier=None, zoom=None, crs=None, **kwargs):$/;"	f
+get_region_box	greenland_data/outlet_glacier_region.py	/^def get_region_box(name, zoom=None, crs=None, df=None):$/;"	f
+get_region_cresis	greenland_data/outlet_glacier_region.py	/^def get_region_cresis(name, zoom=None, crs=None): $/;"	f
+get_velocity_functions	flowline.py	/^def get_velocity_functions(dataset=None):$/;"	f
+glacier_crossflow_average	mesh.py	/^def glacier_crossflow_average(glacier2d):$/;"	f
+glaciers	greenland_data/cresis.py	/^def glaciers():$/;"	f
+home	greenland_data/config.py	/^home=os.environ['HOME']$/;"	v
+indices	geometry.py	/^	indices = []$/;"	v	class:ExtractLinearGridData
+interpolate_data_on_glacier_grid	mesh.py	/^def interpolate_data_on_glacier_grid(dataset, glacier2d):$/;"	f
+intersect_line	geometry.py	/^    def intersect_line(self, l, raise_error = True, closeto=None):$/;"	m	class:StraightLine
+intersects	geometry.py	/^    def intersects(self, s, loose = False):$/;"	m	class:Segment
+is_defined	greenland_data/cresis.py	/^def is_defined(name):$/;"	f
+is_in_boxdecker2011	greenland_data/outlet_glacier_region.py	/^def is_in_boxdecker2011(name):$/;"	f
+is_sorted	geometry.py	/^def is_sorted(l):$/;"	f
+is_valid	geometry.py	/^    def is_valid(self):$/;"	m	class:Line
+is_valid	geometry.py	/^    def is_valid(self):$/;"	m	class:Segment
+join	greenland_data/boxdecker2011/read_data.py	/^def join(tab1, tab2):$/;"	f
+keepincache	helper.py	/^def keepincache(fun):$/;"	f
+length	geometry.py	/^    def length(self):$/;"	m	class:Line
+length	geometry.py	/^    def length(self):$/;"	m	class:Segment
+length	geometry.py	/^    def length(self):$/;"	m	class:Vector
+load	greenland_data/bamber2013.py	/^def load(*args, **kwargs):$/;"	f
+load	greenland_data/boxdecker2011/read_data.py	/^def load():$/;"	f
+load	greenland_data/cresis.py	/^def load(name):$/;"	f
+load	greenland_data/elevation.py	/^def load(bbox=None, dataset=None, crs=None, variable=None, **kwargs):$/;"	f
+load	greenland_data/morlighem2014.py	/^def load(*args, **kwargs):$/;"	f
+load	greenland_data/rignot_mouginot2012.py	/^def load(bbox=None, maxshape=None):$/;"	f
+load	greenland_data/standard_dataset.py	/^def load(*args, **kwargs):$/;"	f
+load	greenland_data/velocity.py	/^def load(bbox=None, dataset=None, crs=None, maxshape=(1000,1000)):$/;"	f
+load_error	greenland_data/cresis.py	/^def load_error(name):$/;"	f
+load_grid	greenland_data/cresis.py	/^def load_grid(name):$/;"	f
+load_presentgreenland	greenland_data/data.py	/^def load_presentgreenland(name, *args, **kwargs):$/;"	f
+load_smb	greenland_data/data.py	/^def load_smb(name, **kwargs):$/;"	f
+locate	geometry.py	/^    def locate(self, x):$/;"	m	class:Line
+loop_over_segments	geometry.py	/^    def loop_over_segments(self):$/;"	m	class:Line
+main	greenland_data/boxdecker2011/read_data.py	/^def main():$/;"	f
+make_2d_grid_from_contours	mesh.py	/^def make_2d_grid_from_contours(middle, left, right, dx, ny):$/;"	f
+map_error	greenland_data/cresis.py	/^def map_error(x, y, e, xi, yi):$/;"	f
+massbalance_diag	glacier1d.py	/^def massbalance_diag(glacier1d):$/;"	f
+maxdist	flowline.py	/^    maxdist = 800., # maximum distance for a flowline (any longer line will be discarded)$/;"	v
+mult	geometry.py	/^    def mult(self, alpha):$/;"	m	class:Vector
+nanSplineBase	flowline.py	/^class nanSplineBase(object): # works for regular grid$/;"	c
+naninterp2d	flowline.py	/^class naninterp2d(nanSplineBase, interp2d):$/;"	c
+naninterpReg	flowline.py	/^class naninterpReg(nanSplineBase, RectBivariateSpline):$/;"	c
+nans	flowline.py	/^def nans(n):$/;"	f
+parallel	geometry.py	/^    def parallel(self, l):$/;"	m	class:StraightLine
+polar_stere	greenland_data/boxdecker2011/read_data.py	/^def polar_stere(lon_w, lon_e, lat_s, lat_n, **kwargs):$/;"	f
+print_boxdecker2011	greenland_data/outlet_glacier_region.py	/^def print_boxdecker2011(name):$/;"	f
+prolonge_line	geometry.py	/^def prolonge_line(line, dist, how='end'):$/;"	f
+pt_true	geometry.py	/^		pt_true = Point(xdata[0,j],ydata[i,0]) # true point on the grid$/;"	v	class:ExtractLinearGridData
+read_thickness_error	greenland_data/cresis.py	/^def read_thickness_error(filein):$/;"	f
+read_xyz_composite	greenland_data/cresis.py	/^def read_xyz_composite(filein):$/;"	f
+remove	geometry.py	/^    def remove(self, i):$/;"	m	class:Line
+resample	geometry.py	/^    def resample(self, dx = None, n = None, nmax=None, verbose=False):$/;"	m	class:Line
+reshape_xyz	greenland_data/cresis.py	/^def reshape_xyz(x, y, *args):$/;"	f
+revert	geometry.py	/^    def revert(self):$/;"	m	class:Line
+sproduct	geometry.py	/^    def sproduct(self, v):$/;"	m	class:Vector
+stopcond	flowline.py	/^    def stopcond(**dico):$/;"	f	function:drift_from_point
+straightness	flowline.py	/^    straightness = 0.7, # max ratio between start-to-end straight and total distance of a flowline (default 0.7=1\/sqrt(2))$/;"	v
+subset	geometry.py	/^    def subset(self, i1, i2):$/;"	m	class:ExtractLinearGridData
+table1	greenland_data/boxdecker2011/read_data.py	/^def table1():$/;"	f
+table2	greenland_data/boxdecker2011/read_data.py	/^def table2():$/;"	f
+to_vector	geometry.py	/^    def to_vector(self):$/;"	m	class:Segment
+transform_bbox	greenland_data/elevation.py	/^        def transform_bbox(bbox, crs1, crs2):$/;"	f	function:load
+transform_bbox	greenland_data/velocity.py	/^def transform_bbox(bbox, crs1, crs2):$/;"	f
+translate	geometry.py	/^    def translate(self, v):$/;"	m	class:Point
+vmin	flowline.py	/^    vmin = 0.5, # do not start flowline if velocity under vmin$/;"	v
+xproduct	geometry.py	/^    def xproduct(self, v):$/;"	m	class:Vector

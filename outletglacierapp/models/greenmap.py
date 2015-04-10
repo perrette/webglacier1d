@@ -34,7 +34,7 @@ def get_coords(nm):
     l,b,r,t = [round(c*1e-3) for c in reg]
     return l,r,b,t
 
-def _load_data(coords, variable, dataset=None, zoom=None, maxshape=None):
+def _load_data(coords, variable, dataset=None, maxshape=None):
     """ load data to be plotted, for a particular glacier 
     and a particular region
 
@@ -44,7 +44,7 @@ def _load_data(coords, variable, dataset=None, zoom=None, maxshape=None):
         in the coordinate system from STANDARD_DATASET
     variable : variable to load
     dataset : data source, optional 
-    zoom : data size, optional
+    maxshape : maximum shape of laoded data (sub-sampling when loading to save time)
     
     Returns
     -------
@@ -62,7 +62,7 @@ def _load_data(coords, variable, dataset=None, zoom=None, maxshape=None):
 
     # Bedrock topography
     elif variable in ('bedrock', 'surface', 'thickness'):
-        ds = load_elevation(bbox, zoom=zoom, variable=variable, dataset=dataset, crs=CRS, maxshape=maxshape) #, variable=variable)
+        ds = load_elevation(bbox, variable=variable, dataset=dataset, crs=CRS, maxshape=maxshape) #, variable=variable)
         data = ds[variable]
 
     # Velocity

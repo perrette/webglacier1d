@@ -16,7 +16,7 @@ from . import outlet_glacier_region as region
 DATASET = 'bamber2013'
 #DATASET = 'bamber2001'
 
-def load(bbox=None, dataset=None, crs=None, variable=None, **kwargs):
+def load(bbox=None, dataset=None, crs=None, variable=None, maxshape=None):
     """ Load elevation data
 
     Parameters
@@ -30,8 +30,6 @@ def load(bbox=None, dataset=None, crs=None, variable=None, **kwargs):
     variable : {'bedrock', 'surface', 'thickness'}, optional
         load all variable if not provided
     
-    **kwargs: further arguments passed to get_region (e.g. zoom)
-
     Returns
     -------
     ds : dimarray.Dataset instance with 3 elevation variables
@@ -149,11 +147,26 @@ def load(bbox=None, dataset=None, crs=None, variable=None, **kwargs):
         # assert ds.dims == (yn, xn), repr((ds.dims, yn, xn))
         ds.dims = ('y','x')
 
+        # Transform to the appropriate coordinate system
+        # this is the time-intensive part, so better subsample here...
+        if maxshape is not None:
+            maxi, maxj = maxshape
+            ny, nx = ds.y.size, ds.x.size
+            si = np.floor_divide(ny, maxi)
+            sj = np.floor_divide(nx, maxj)
+            si = max([1, si])
+            sj = max([1, sj])
+            if si != 1 or sj != 1:
+                print 'subsampling before coord transform (elevation): ',si,sj
+                datasets_sub = [(k, ds[k].ix[::si, ::sj]) for k in ds.keys()]
+                ds = da.Dataset(datasets_sub)
+                # j = j[::sj]
+                # i = i[::si]
+
         # just indicate the provenance
         ds.dataset = dataset
         ds.ncfile = ncfile
 
-    # Transform to the appropriate coordinate system
 
     orig_crs = get_crs(mapping) # original projection system
     if crs is not None and crs.proj4_init != orig_crs.proj4_init:

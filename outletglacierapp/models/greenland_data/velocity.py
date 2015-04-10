@@ -14,7 +14,7 @@ from dimarray.geo import transform, transform_vectors
 from . import standard_dataset
 from . import rignot_mouginot2012
 
-def load(bbox=None, dataset=None, crs=None, maxshape=(1000,1000)):
+def load(bbox=None, dataset=None, crs=None, maxshape=None):
     """ Load velocity 
 
     Parameters
