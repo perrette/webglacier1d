@@ -9,7 +9,7 @@ import numpy as np
 
 from flask import Flask, redirect, url_for, render_template, request, jsonify, flash, session, abort, make_response, send_from_directory
 from forms import MapForm, FlowLineForm, ExtractForm, MeshForm
-from config import glacier_choices, datadir, maxpixels as MAXPIXELS
+from config import glacier_choices, datadir
 
 import dimarray as da
 from models.greenmap import get_dict_data, get_json_data, _load_data, get_coords
@@ -105,8 +105,8 @@ def reset():
     if 'variable' in session: del session['variable']
     if 'dataset' in session: del session['dataset']
     if 'coords' in session: del session['coords']
-    if 'glacier' in session: 
-        del session['glacier']
+    if 'glacier' in session: del session['glacier']
+    if 'maxpixels' in session: del session['maxpixels']
     return redirect(url_for('drawing'))
 
 @app.route('/mapdata', methods=["GET"])
@@ -125,6 +125,7 @@ def mapdata():
     session['variable'] = variable.strip()
     session['dataset'] = source.strip()
     session['glacier'] = form.glacier.data
+    session['maxpixels'] = form.maxpixels.data
 
     # update coordinates to get a fixed aspect ratio
     r = 1
@@ -139,10 +140,10 @@ def mapdata():
     variable = session['variable'] # coordinates (can be custom)
     dataset = session['dataset'] # coordinates (can be custom)
 
-    if 'maxpixels' in session:
-        maxshape = (session['maxpixels'],)*2
-    else:
-        maxshape = (MAXPIXELS,)*2
+    print 'maxpixels', form.maxpixels.data, session['maxpixels']
+    # if form.maxpixels.data == 100: 1/0
+
+    maxshape = (session['maxpixels'],)*2
     data = get_json_data(variable, dataset, coords, maxshape=maxshape)
     return make_response(data) #, type='application/json')
 

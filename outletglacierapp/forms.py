@@ -27,7 +27,7 @@ class MapForm(Form):
 
     # drop-down list to select glacier
     glacier = SelectField("Glacier", choices=[(d,d.capitalize()) for d in o.glacier_choices], default=o.glacier_default)
-    maxpixels = FloatField(default=o.maxpixels)
+    maxpixels = IntegerField("Pixels:",default=o.maxpixels)
 
     #coords = FormField(MapCoordinates()) 
     left = FloatField(default=c[0])

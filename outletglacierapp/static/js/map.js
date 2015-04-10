@@ -136,7 +136,7 @@ map.dependencies = []; // update after map data is updated
 var coordsController = function(name, coords) {
     
     // define controllers from form
-    var $left,$right,$top,$bottom,$glacier,$dataset
+    var $left,$right,$top,$bottom,$glacier,$dataset,$maxpixels
       
     // coordinates
     $left = $("#left");
@@ -147,6 +147,7 @@ var coordsController = function(name, coords) {
     // pre-defined coordinates
     $glacier = $("#glacier");
     $dataset = $("#dataset");
+    $maxpixels = $("#maxpixels");
 
     this.name = name || $glacier.val(); // initialize from form 
 
@@ -188,6 +189,17 @@ var coordsController = function(name, coords) {
 
     // submit on dataset change
     $dataset.change(map.get_and_update_data)
+    $maxpixels.change(map.get_and_update_data)
+    // $maxpixels.keypress(function(event) { return event.keyCode != 13; });
+    // Prevent enter (13) from submitting the form
+    $maxpixels.keypress(function(event) { 
+      if (event.keyCode == 13) {
+        map.get_and_update_data(); 
+        event.preventDefault(); // do not submit the form
+      } else { 
+        true;
+      } 
+    });
 
     // relate glacier button and coordinates
     ctrl = this; 
