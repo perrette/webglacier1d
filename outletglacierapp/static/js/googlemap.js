@@ -81,12 +81,16 @@ $(document).ready( function() {
 // override drawing functions to work with googlemap
 drawing.getLines = function() {
   // get line coordinates
+  // console.log("CHECK LINES")
+  // console.log(lines)
+  // console.log(lines[0].gline.getPath())
   return lines.map(function(d){
     return {
       id: d.id,
       values: d.gline.getPath().j.map(function(df) {
         return {
-          x:df.B,
+          x:df.D,    // These letters are funny, change over time...TODO: read the doc and find proper way
+          // x:df.B, // This used to work
           y:df.k
         }
       })

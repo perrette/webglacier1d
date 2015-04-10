@@ -797,6 +797,9 @@ drawing.makeLinesChart = function() {
             .call();
         },
         error: function( xhr, status, errorThrown ) {
+          var w = window.open(null, "_self")
+          w.document.write(xhr.responseText)
+          w.document.close()
           console.log( "Error: " + errorThrown );
           console.log( "Status: " + status );
           console.dir( xhr );
@@ -1025,6 +1028,9 @@ drawing.postLinesToServer = function(success) {
     // contentType:'text/html',
     success: success,
     error: function( xhr, status, errorThrown ) {
+      var w = window.open(null, "_self")
+      w.document.write(xhr.responseText)
+      w.document.close()
       console.log( "Error: " + errorThrown );
       console.log( "Status: " + status );
       console.dir( xhr );
