@@ -118,6 +118,7 @@ def load(bbox=None, dataset=None, crs=None, variable=None, maxshape=None):
             if dataset == 'morlighem2014':
                 bamber_crs = get_crs(bamber2013.MAPPING) # original mapping
                 data_crs = get_crs(mapping) # original mapping
+                bbox_ = bbox # save
                 bbox = _transform_bbox(bbox, bamber_crs, data_crs)
             # default CRS is OK
             # data_crs = get_crs(mapping) # original mapping
@@ -185,6 +186,12 @@ def load(bbox=None, dataset=None, crs=None, variable=None, maxshape=None):
         for nm in ds:
             if nm == 'mapping': continue
             ds2[nm] = da.transform(ds[nm], from_crs=orig_crs, to_crs=crs, xt=xt, yt=yt)
+        # make sure the bounding box is still right...
+        if dataset == 'morlighem2014':
+            llx, lly, urx, ury = bbox_
+            ind_i = np.where((ds2.y >= lly) & (ds2.y <= ury))[0]
+            ind_j = np.where((ds2.x >= llx) & (ds2.x <= urx))[0]
+            ds2 = da.Dataset([(nm, ds2[nm].ix[ind_i, ind_j]) for nm in ds2.keys()])
         ds = ds2
 
     return ds
