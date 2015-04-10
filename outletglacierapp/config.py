@@ -24,6 +24,7 @@ bx2013 = bd.load()
 sources = dict(
     bamber2001 = ('bedrock', 'surface', 'thickness'),
     bamber2013 = ('bedrock', 'surface', 'thickness'),
+    morlighem2014 = ('bedrock',), #'surface', 'thickness'),
     joughin2010 = ('velocity_mag', 'velocity_x', 'velocity_y','velocity_angle'),
     rignot_mouginot2012 = ('velocity_mag','velocity_angle'),
     standard_dataset = stdvariables,
@@ -32,7 +33,7 @@ sources = dict(
 # Data sources for variables to extract to glacier
 variables = ['bedrock', 'velocity_mag', 'smb']
 sources_choices = {v:[ds for ds in sources.keys() if v in sources[ds]] for v in variables}
-sources_choices['bedrock'].append('morlighem2014') # add morlighem to the options
+# sources_choices['bedrock'].append('morlighem2014') # add morlighem to the options
 sources_default = dict(
     bedrock = 'bamber2013',
     # surface = 'bamber2013',
