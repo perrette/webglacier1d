@@ -15,13 +15,14 @@ Not provided here ! You need to get it yourself...
 
 Dependencies
 ------------
-numpy
-[netCDF4](https://github.com/Unidata/netcdf4-python) (see install help on dimarray github)
-[dimarray (dev)](https://github.com/perrette/dimarray) : please install the latest version from github. The pip version will not work.
-flask
-wtforms
-flask-wtf
-... anything left out?
+- numpy
+- [netCDF4](https://github.com/Unidata/netcdf4-python) (see install help on dimarray github)
+- [dimarray (dev)](https://github.com/perrette/dimarray) : please install the latest version from github. The pip version will not work.
+- flask
+- wtforms
+- flask-wtf
+
+...anything left out?
 
 Install
 -------
