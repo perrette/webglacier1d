@@ -71,10 +71,13 @@ def load(bbox=None, maxshape=None):
             j = j[::sj]
             i = i[::si]
     
-    vx = f.variables['vx'][i, j]
-    vy = f.variables['vy'][i, j]
+    i = sorted(i.tolist())
+    j = sorted(j.tolist())
+
+    vx = f.variables['vx'][i, j][::-1,:]
+    vy = f.variables['vy'][i, j][::-1,:]
     x = x[j]
-    y = y[i]
+    y = y[i][::-1]
 
     # convert all to a dataset
     ds = da.Dataset()
