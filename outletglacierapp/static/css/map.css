@@ -1,0 +1,224 @@
+/***************************
+ * SHARED CSS PROPERTIES
+ ****************************/
+
+body {
+  margin: 20px;
+}
+
+#header {
+  position: static;
+}
+
+#left-column {
+  padding-top: 0px;
+  padding-left: 10px;
+  float:left;
+}
+
+#right-column {
+  padding-top: 0px;
+  float:left;
+}
+
+/********************************
+ * MAP
+ ********************************/
+
+#map-figure {
+  position: relative;
+} 
+
+#map-config-form {
+  margin-left : 40px;
+}
+
+#map-layout-form {
+  /* for some reason needed to cover a gap */
+  margin-bottom: -30px;
+  margin-top: 0px;
+  margin-left : 40px;
+} 
+
+canvas.map {
+    position: absolute;
+    z-index: -1;
+    /* transform: translate(80,60); */
+}
+
+svg .map
+{
+    position: absolute;
+}
+
+.doc {
+  position: relative;
+  left: 30px;
+}
+
+/***************************
+ * axis lines, ticks, labels
+ ****************************/
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    /* shape-rendering: crispEdges; */
+}
+
+.axis .tick {
+  stroke: #777;
+  stroke-dasharray: 4;
+  stroke-opacity: .3;
+  /* stroke-dasharray: 1, 2, 3, 4, 5; */
+  /* stroke-width: 1; */
+}
+
+.axis.grid {
+    fill: none;
+    stroke: #000;
+    stroke-opacity: .1;
+    shape-rendering: crispEdges;
+}
+
+.axis.path {
+    stroke-width: 0;
+}
+
+
+.axis text, text.axis {
+    font: 12px sans-serif;
+}
+
+/***************************
+ * brushing
+ ****************************/
+.brush .extent {
+  stroke: #fff;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+
+/***************************
+ * POINT & LINE DRAWING 
+ ****************************/
+
+.drawing path.link {
+  stroke-opacity: 1;
+  stroke-width: 3;
+  stroke : steelblue;
+}
+
+/* Locations on the map */
+.drawing circle.node {
+  fill: steelblue;
+  stroke: black;
+  stroke-width: 0.001;
+  fill-opacity: 1;
+}
+
+path.link:hover, circle.node:hover {
+  stroke-opacity: 1;
+  /* stroke-width: 3; */
+  stroke : red;
+  fill : red;
+}
+
+.link.shaded, .node.shaded {
+  stroke-opacity:0.3 !important; 
+  fill-opacity:0.3 !important; 
+}
+
+/* inset line plot */
+path.line {
+  stroke: black;
+  stroke-width: 1;
+  stroke-opacity: 1;
+  fill : none;
+}
+
+table {
+  border-spacing: 10px 0px;
+  border-collapse: separate;
+}
+
+/* remove bullet points in list for wtforms multiple checkboxes */
+.form li {
+  list-style-type: none;
+  position: relative;
+  margin-left:-30px;
+}
+
+/***************************
+ * MESH
+ ****************************/
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    /* shape-rendering: crispEdges; */
+}
+
+.axis .tick {
+  stroke: #777;
+  stroke-dasharray: 4;
+  stroke-opacity: .3;
+  /* stroke-dasharray: 1, 2, 3, 4, 5; */
+  /* stroke-width: 1; */
+}
+
+.axis.grid {
+    fill: none;
+    stroke: #000;
+    stroke-opacity: .1;
+    shape-rendering: crispEdges;
+}
+
+.axis.path {
+    stroke-width: 0;
+}
+
+.mesh path {
+  stroke: black;
+  stroke-width: 1;
+  stroke-opacity: 1;
+  fill:none;
+}
+
+.mesh .shaded {
+  fill-opacity: 0.2;
+  stroke-opacity: 0.2;
+}
+
+/* /* for the glacier1d */ */
+/* #glacier1d  { */
+/*   /* position : static; */ */
+/*   /* float:left; */ */
+/*   position : absolute; */
+/* } */
+
+/*******************************
+ * GLACIER1D 
+ *******************************/
+
+#glacier1d .figure, #glacier1d .options {
+  display:inline;
+}
+
+#glacier1d .legend rect {
+  fill:none;
+  stroke:none;
+  /* fill:white; */
+  /* stroke:black; */
+  /* opacity:0.8; */
+}
+
+#glacier1d .legend text {
+  font-size:12px;
+}
+
+#glacier1d path.line {
+  stroke-width:2;
+}

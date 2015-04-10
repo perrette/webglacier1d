@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% block title %}Drawing{% endblock %}
+{% block description%} 
+<ul>
+    <li> Vizualize and modify flowlines and glacier outlines on Google Map 
+    <li> Click on Save to commit changes to server, and on Drawing  to come back to drawing page 
+    <li> If the lines already have the left, right, middle ID, it is possible to click on Mesh directly
+    (but renaming lines can only happen on the drawing page)
+</ul>
+{% endblock %}
+{% block head%}
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+<meta charset="utf-8">
+{# {{ super() }} #}
+{# <link rel="stylesheet" href="/static/css/bootstrap.3.2.0.min.css"> #}
+<!-- Optional theme -->
+{# <link rel="stylesheet" href="/static/css/bootstrap-theme.3.2.0.min.css"> #}
+<link rel="stylesheet" href="/static/css/map.css">
+<script src='/static/js/libs/jquery.min.js'> </script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing"></script>
+<script src='/static/js/drawing.js'> </script>
+<script src='/static/js/googlemap.js'> </script>
+{# <script src='/static/js/drawing.js'> </script> #}
+<style>
+    #map-canvas {
+        height: 500;
+        width: 500;
+        margin: 0px;
+        padding: 0px
+    }
+</style>
+{% endblock %}
+
+{% block leftcolumn %}
+<div id="map-canvas"></div>
+{% endblock leftcolumn %}
+
+{% block rightcolumn %}
+{{ super() }}
+
+<div id="drawing-toolkit"> 
+
+    {# Main buttons #}
+    {% block drawingcommontools %}
+    <div id="drawing-common-tools"> 
+        <div style="height:20px;"> <p id="infotext"></p></div>
+        {# <input type="button" id="new-line" class="btn btn-danger" value="+"/> #}
+        {# <input type="button" id="new-flowline" class="btn btn-danger" value="++"/> #}
+        {# <input type="button" id="remove-lines" class="btn btn-primary" value="Remove All"/> #}
+        {# <input type="button" id="download-lines" class="btn btn-primary" value="Download"/> #}
+        <input type="button" id="save-lines" class="btn btn-success" value="Save"/>
+        <a href="/drawing" id="googlemap" class="btn btn-success">Drawing</a>
+        <input type="button" id="mesh-glacier" class="btn btn-success" value="Mesh"/>
+        {# <input type="file" id="upload-lines" class="btn" value="Upload" multiple /> #}
+    </div>
+    {% endblock %}
+
+</div>
+
+{% endblock rightcolumn %}

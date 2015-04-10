@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block title %}Mesh glacier{% endblock %}
+{% block description %} 
+<h3> Mesh glacier </h3>
+Mesh the glacier domain based on drawn lines and average data as 1-D flowline domain.
+{% endblock %}
+
+{% block head%}
+{{ super() }}
+<script src='/static/js/libs/colorbar.js'> </script>
+<script src='/static/js/map.js'> </script>
+<script src='/static/js/drawing.js'> </script>
+<script src='/static/js/libs/vega.js'> </script>
+<script src='/static/js/mesh.js'> </script>
+<script src="/static/js/libs/d3.legend.js"></script>
+
+<script src='/static/js/glacier1d.js'> </script>
+{% endblock %}
+
+{% block leftcolumn %}
+{{ super() }}
+{% include "meshform.html" %}
+{% endblock %}
+{% block rightcolumn %}
+{{ super() }}
+
+<div>
+    {% include "glacier1d.html" %}
+</div>
+<div>
+    {# <h3> Navigation panel </h3> #}
+    <a href='/drawing' class="btn btn-success"> Drawing </a>
+    <a href='/googlemap' class="btn btn-success"> Google Map </a>
+    <button class="btn btn-success" id='refresh-glacier1d'>Refresh</button>
+    <a href='/download/glacier1d.nc' class="btn btn-success"> Download </a>
+    {# <button type="button" id="download-nc" class="btn btn-success"/> Download </button> #}
+</div>
+
+{% endblock %}

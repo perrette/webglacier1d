@@ -1,0 +1,55 @@
+<div id=map-tools>
+  {% block mapsidepanel %}
+
+  {% block maptoolkit %}
+  <form id="map-layout-form">
+    <fieldset>
+      <button id="color-range-btn" type="button" class="btn btn-primary" data-toggle="button">scale</button>
+      <button id="map-refresh-toolkit" class="refresh btn btn-primary"> Refresh </button>
+      <button id="map-reset-toolkit" class="btn btn-warning"> Reset </button>
+      <br> 
+      <div id="color-range">
+        <label for="color-min">min: </label>
+        <input type="text" size=4 id="color-min" value="">
+        <label for="color-max"> max: </label>
+        <input type="text" size=4 id="color-max" value="">
+      </div>
+    </fieldset>
+  </form>
+  <br><br>
+  {% endblock maptoolkit %}
+
+  {% block mapconfigform %}
+  <form id=map-config-form %}>
+    {{ form.csrf_token }}
+    <fieldset>
+      {{form.dataset.label()}} {{form.dataset()}}<br>
+      {{form.glacier.label()}} {{form.glacier()}}<br>
+      <div hidden>  
+        <label for='coords'>Coordinates (km):</label> <br>
+        <table>
+          <tr>
+            <td></td> 
+            <td> {{form.top(size=5)}} </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td> {{form.left(size=5)}} </td> 
+            <td></td>
+            <td> {{form.right(size=5)}} </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>{{form.bottom(size=5)}}</td>
+            <td></td>
+          </tr>
+        </table>
+      </div>
+      <button type="submit" id="submit-form" class="refresh" hidden> Refresh </button>
+    </fieldset>
+  </form>
+  {% endblock %}
+
+  {% endblock mapsidepanel %}
+
+</div>

@@ -1,0 +1,6 @@
+<form id="mesh-form" {% if hidemeshform %}hidden{% endif %}>
+    {{meshform.dx.label()}} : {{meshform.dx(size=5)}}<br>
+    {{meshform.ny.label()}} : {{meshform.ny(size=5)}}
+    <button class="btn btn-success" id="remesh-btn"/>Remesh</button>
+    <button class="btn" id="meshoutline-btn" style="visibility:hidden;"/>Outline</button>
+</form>

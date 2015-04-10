@@ -1,0 +1,71 @@
+<html>
+  <head>
+    {% block head %}
+
+    {# <title>{% block title %}{% endblock %} - Greenland Outlet Glacier Processing</title> #}
+    <title>{% block title %}Greenland Outlet Glacier Processing{% endblock %} </title>
+
+    <link rel="stylesheet" href="/static/css/bootstrap.3.2.0.min.css">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="/static/css/bootstrap-theme.3.2.0.min.css">
+    <link rel="stylesheet" href="/static/css/map.css">
+
+    <script src='/static/js/libs/jquery.min.js'> </script>
+    <script src='/static/js/libs/d3.v3.min.js'> </script>
+    <script src='/static/js/libs/bootstrap.min-3.2.0.js'> </script>
+    {% endblock %}
+
+  </head>
+  <body>
+
+      <div id=header>
+          {% block header %}
+          {# <h1>{{self.title()}}</h1> #}
+          <p>
+              {% block description %}
+              {% endblock %}
+          </p>
+          {% endblock %} 
+      </div>
+
+      <div id=flash-messages>
+          <!-- Flash messages -->
+          {# {% from "_formhelpers.html" import render_field, render_field_nolab %} #}
+          {% with messages = get_flashed_messages() %}
+          {% if messages %}
+          <ul>
+              {% for message in messages %}
+              <li>{{ message }} </li>
+              {% endfor %}
+          </ul>
+          {% endif %}
+          {% endwith %}
+      </div>
+
+      <!-- Content of the block -->
+      <div id=content>
+          {% block content %}
+
+          {# Map: figure + tools #}
+          <div id=left-column>
+              {% block leftcolumn %}
+              <div id=map-figure>
+              </div>
+              {% include "maptools.html" %}
+              {% endblock leftcolumn %}
+          </div>
+
+          {# Side view #}
+          <div id=right-column>
+              {% block rightcolumn %}
+              {% endblock rightcolumn %}
+          </div>
+
+          {% endblock content %}
+      </div>
+
+      <div id=footer>
+      </div>
+
+  </body>
+  </html>

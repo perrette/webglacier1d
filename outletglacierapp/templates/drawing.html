@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+{% block title %}Drawing{% endblock %}
+{% block description%} 
+<ul>
+    <li> Vizualize Greenland data with mouse and boxzoom: choose among glaciers, datasets.
+    <li> Draw 3 lines (center, left, right) to represent glacier geometry.
+    <li> Add new lines to draw (+) or choose a starting point to compute a flowline based on surface velocity data (++).
+    <li> You can use the flowlines as a guide and subsequently move, insert, append points 
+so that spurious topographic features do not enter into the glacier geometry. After adding a flowline you may need to resample to a smaller number of points (e.g. 15) to move points more easily.
+    <li> Use the inlet plot to vizualize the data unlerlying the lines.
+    <li> You can download or upload your work anytime with (Download), or Save them to server (this will last only the time of one session)
+    <li> When you have 3 satisfactory lines, rename the lines appropriately (left, middle, center) and press on Save & Mesh to construct a 2-D mesh, 
+a preliminary step prior to extracting 1-D flowline geometry.
+</ul>
+{% endblock %}
+{% block head%}
+{{ super() }}
+<script src='/static/js/libs/colorbar.js'> </script>
+<script src='/static/js/map.js'> </script>
+<script src='/static/js/drawing.js'> </script>
+<script>
+    $(document).ready(function() {
+        initialize()
+    });
+</script>
+{% endblock %}
+
+{% block rightcolumn %}
+{{ super() }}
+
+<div id="drawing-toolkit"> 
+
+    {# Main buttons #}
+    {% block drawingcommontools %}
+    <div id="drawing-common-tools"> 
+        <p id="infotext" style="position:absolute;"></p><br>
+        <input type="button" id="new-line" class="btn btn-danger" value="+"/>
+        <input type="button" id="new-flowline" class="btn btn-danger" value="++"/>
+        <input type="button" id="remove-lines" class="btn btn-primary" value="Remove All"/>
+        <!-- <input type="button" id="prev" class="btn btn&#45;primary" value="Prev"/> -->
+        <!-- <input type="button" id="next" class="btn btn&#45;primary" value="Next"/> -->
+        <input type="button" id="download-lines" class="btn btn-primary" value="Download"/>
+        <input type="button" id="save-lines" class="btn btn-success" value="Save"/>
+        <a href="/googlemap" id="googlemap" class="btn btn-success">Google Map</a>
+        <input type="button" id="mesh-glacier" class="btn btn-success" value="Save & Mesh"/>
+        <input type="file" id="upload-lines" class="btn" value="Upload" multiple />
+    </div>
+    {% endblock %}
+
+    {# Flowline parameters #}
+    {% block flowlineform %}
+    <form id=flowline-form>
+        <fieldset>
+            <label> Flowline parameters:</label>
+            half-length {{flowline.maxdist(size=3)}}
+            step {{flowline.dx(size=2)}} (km)
+            {{flowline.dataset(hidden=True)}}
+        </fieldset>
+    </form>
+    {% endblock %}
+
+
+    {# Individual lines toolkits in a table #}
+    {% block drawingsingletools %}
+    <div id="drawing-single-tools"> 
+    </div>
+    {% endblock %}
+
+    {# Add hidden meshform #}
+    {% include "meshform.html" %}
+
+</div>
+
+{% endblock rightcolumn %}

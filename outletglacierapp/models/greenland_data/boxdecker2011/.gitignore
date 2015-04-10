@@ -1,0 +1,9 @@
+*pdf
+*nc
+*grd
+createMapsEtopo1.py
+etopo1.tif
+load_etopo1.py
+.*swp
+
+

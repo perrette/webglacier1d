@@ -1,0 +1,22 @@
+<!-- {# <p> The extracted glacier will appear in this panel </p> #} -->
+<div class="glacier1d">
+  <div id=glacier1d class="figure">
+  </div>
+
+  <div class="options">
+    <h3> Data Options </h3>
+    <form id="extractform" class="form">
+      <p> Select which variables to extract, and from which data source</p>
+      <table>
+        {% for v in extractform %}
+        {% if not v.name.endswith("_source") and v.name != "csrf_token" %}
+        <tr> 
+          <td> {{v.label()}}</td> 
+          <td> {{v()}} </td> 
+        </tr>
+        {% endif %}
+        {% endfor %}
+      </table>
+    </form>
+  </div>
+</div>
