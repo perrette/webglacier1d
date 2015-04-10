@@ -71,6 +71,9 @@ glacier_default = 'Greenland'
 # zoom around a glacier
 zoom = 300e3 
 
+# size of the image that can be transfered - per side - (total pixels = maxpixels**2)
+maxpixels = 250
+
 #Flow line options
 dx = 1 # space between flowline elements
 maxdist = 200 # max distance (km)

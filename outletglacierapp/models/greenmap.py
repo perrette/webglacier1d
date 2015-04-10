@@ -34,7 +34,7 @@ def get_coords(nm):
     l,b,r,t = [round(c*1e-3) for c in reg]
     return l,r,b,t
 
-def _load_data(coords, variable, dataset=None, zoom=None):
+def _load_data(coords, variable, dataset=None, zoom=None, maxshape=None):
     """ load data to be plotted, for a particular glacier 
     and a particular region
 
@@ -62,12 +62,12 @@ def _load_data(coords, variable, dataset=None, zoom=None):
 
     # Bedrock topography
     elif variable in ('bedrock', 'surface', 'thickness'):
-        ds = load_elevation(bbox, zoom=zoom, variable=variable, dataset=dataset, crs=CRS) #, variable=variable)
+        ds = load_elevation(bbox, zoom=zoom, variable=variable, dataset=dataset, crs=CRS, maxshape=maxshape) #, variable=variable)
         data = ds[variable]
 
     # Velocity
     elif variable in ('velocity_x', 'velocity_y','velocity_mag','velocity_angle'):
-        velocity = load_velocity(bbox, dataset=dataset, crs=CRS, maxshape=(200, 200))   # dataset='...'
+        velocity = load_velocity(bbox, dataset=dataset, crs=CRS, maxshape=maxshape)   # dataset='...'
         vx = velocity['vx']
         vy = velocity['vy']
         if variable == 'velocity_x': 
@@ -90,7 +90,7 @@ def _load_data(coords, variable, dataset=None, zoom=None):
 
     return data
 
-def get_dict_data(variable, dataset, coords, zoom=300e3):
+def get_dict_data(variable, dataset, coords, zoom=300e3, maxshape=(200,200)):
     """ read data and return it as json format for the javascript plotting
     """
     # Update coordinates based on glacier and coords
@@ -98,13 +98,13 @@ def get_dict_data(variable, dataset, coords, zoom=300e3):
     #session['coords'] = [float(c) for c in coords]
 
     # load data
-    dim_a = _load_data(coords, variable, dataset)
+    dim_a = _load_data(coords, variable, dataset, maxshape=maxshape)
 
     if True:
         # subsample data to ease plotting?
         ni, nj = dim_a.shape
         #maxi, maxj = 200, 200 # quite high res, but not too high
-        maxi, maxj = 200, 200 # quite high res, but not too high
+        maxi, maxj = maxshape
         si = np.floor_divide(ni, maxi)
         sj = np.floor_divide(nj, maxi)
         si = max([1, si])

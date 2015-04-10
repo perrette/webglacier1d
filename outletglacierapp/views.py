@@ -9,7 +9,7 @@ import numpy as np
 
 from flask import Flask, redirect, url_for, render_template, request, jsonify, flash, session, abort, make_response, send_from_directory
 from forms import MapForm, FlowLineForm, ExtractForm, MeshForm
-from config import glacier_choices, datadir
+from config import glacier_choices, datadir, maxpixels as MAXPIXELS
 
 import dimarray as da
 from models.greenmap import get_dict_data, get_json_data, _load_data, get_coords
@@ -58,6 +58,8 @@ def get_map_form(session):
         form.top.data = session['coords'][3]
     if 'glacier' in session:
         form.glacier.data = session['glacier']
+    if 'maxpixels' in session:
+        form.maxpixels.data = session['maxpixels']
     return form
 
 def get_form(form, session):
@@ -137,7 +139,11 @@ def mapdata():
     variable = session['variable'] # coordinates (can be custom)
     dataset = session['dataset'] # coordinates (can be custom)
 
-    data = get_json_data(variable, dataset, coords)
+    if 'maxpixels' in session:
+        maxshape = (session['maxpixels'],)*2
+    else:
+        maxshape = (MAXPIXELS,)*2
+    data = get_json_data(variable, dataset, coords, maxshape=maxshape)
     return make_response(data) #, type='application/json')
 
     # data = get_dict_data(session)
