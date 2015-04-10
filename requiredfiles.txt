@@ -1,0 +1,4 @@
+bamber_2013_1km/Greenland_bedrock_topography_V3.nc
+Present_Day_Greenland
+Rignot_Mouginot_2012_IceFlowGreenlandPolarYear20082009
+MCdataset-2014-10-16-y-inverted.nc
