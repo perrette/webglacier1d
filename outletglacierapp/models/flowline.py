@@ -19,8 +19,8 @@ CRS_SD = get_crs(MAPPING_SD)
 from geometry import Line, Point, Vector
 
 PARAMS = dict(
-    dx = 0.3,			# along-flow grid step
-    dy = 0.5, 			# discretization at the mouth (cross-section)
+    dx = 0.3,        		# along-flow grid step
+    dy = 0.5,         		# discretization at the mouth (cross-section)
 
     # start/termination conditions
     vmin = 0.5, # do not start flowline if velocity under vmin
@@ -40,16 +40,14 @@ PARAMS = dict(
 #         return DATA[dataset]
 
 @keepincache
-def get_velocity_functions(dataset=None):
-    if dataset is None: 
-        dataset = PARAMS['dataset']
-    vel = load_velocity(dataset=dataset) # RM2012 CRS
+def get_velocity_functions(dataset, maxshape=None):
+    vel = load_velocity(dataset=dataset, maxshape=maxshape) # RM2012 CRS
     fx = naninterpReg(vel.x, vel.y, vel['vx'].values.T, kx=1, ky=1)
     fy = naninterpReg(vel.x, vel.y, vel['vy'].values.T, kx=1, ky=1)
     return vel.x, vel.y, fx, fy
 
 # load velocity data
-def compute_one_flowline(x0, y0, **kwargs):
+def compute_one_flowline(x0, y0, dataset, maxshape=None, **kwargs):
     """ Load velocity data and compute flowline
     """
     # parameters
@@ -58,13 +56,12 @@ def compute_one_flowline(x0, y0, **kwargs):
     vmin = kwargs.pop('vmin', PARAMS['vmin'])
     maxdist = kwargs.pop('maxdist', PARAMS['maxdist'])*1e3
     straightness = kwargs.pop('straightness', PARAMS['straightness'])
-    dataset = kwargs.pop('dataset', PARAMS['dataset'])
 
     # Load velocity data around the starting point
     w = maxdist # half width of data to be loaded & interpolated
     coords = [x0-w, x0+w, y0-w, y0+w]
 
-    x1, y1, fx, fy = get_velocity_functions(dataset=dataset)
+    x1, y1, fx, fy = get_velocity_functions(dataset=dataset, maxshape=maxshape)
 
     # transform starting point from standard coordinate system to velocity's
     x0 *= 1e3; y0*=1e3 # km to m
@@ -130,7 +127,7 @@ def _drift(x0, y0, fx, fy, dx, sign = 1, maxstep = 10000, stopcond=None, straigh
     Inputs:
     - x0, y0  : coordinates of the start Point
     - fx, fy  : spline to obtain vector coordinates at (x, y)
-    - dx	    : linear step 
+    - dx            : linear step 
     - sign    : [default 1] : multiply the vector field (e.g. upstream or downstream)
     - maxstep    : maximum number of steps
     - straightness : 1> > 0 , stop the drift if eddies (when > 0). if <<0, loose, if close to 1 straight
@@ -169,59 +166,59 @@ def _drift(x0, y0, fx, fy, dx, sign = 1, maxstep = 10000, stopcond=None, straigh
     i = 0
     while True:
 
-	i+=1
+        i+=1
 
-	# compute velocity at the desired grid point
-	v = Vector(fx(pt.x, pt.y), fy(pt.x, pt.y))
-	vlen = v.length()
-	velmag.append(vlen) # append velocity magnitude
+        # compute velocity at the desired grid point
+        v = Vector(fx(pt.x, pt.y), fy(pt.x, pt.y))
+        vlen = v.length()
+        velmag.append(vlen) # append velocity magnitude
 
-	if i > maxstep:
-	    print 'maximum number of steps reached: ', maxstep
-	    break
+        if i > maxstep:
+            print 'maximum number of steps reached: ', maxstep
+            break
 
-	if stopcond is not None and stopcond(x=pt.x, y=pt.y, vx=v.x, vy=v.y, v=vlen, dist=totaldist, time=totaltime):
-	    print 'stop condition after {:.1f} km'.format(totaldist*1e-3)
-	    break
+        if stopcond is not None and stopcond(x=pt.x, y=pt.y, vx=v.x, vy=v.y, v=vlen, dist=totaldist, time=totaltime):
+            print 'stop condition after {:.1f} km'.format(totaldist*1e-3)
+            break
 
-	# stop if velocity vector is NaN (it would mean an invalid point)
-	if np.isnan(vlen):
-	    flowline.pop() # remove current (invalid) point from flow line
-	    time.pop()
-	    dist.pop()
-	    velmag.pop()
-	    break
+        # stop if velocity vector is NaN (it would mean an invalid point)
+        if np.isnan(vlen):
+            flowline.pop() # remove current (invalid) point from flow line
+            time.pop()
+            dist.pop()
+            velmag.pop()
+            break
 
-	# Stop if kick in the flowlines
-	#n = int(3e3/dx) # about 10 points are used
-	n = 3
-	if len(flowline) >= n:
-	    last_two_straight = flowline[-1].distance(flowline[-n])
-	    if (n-1) * dx * straightness > last_two_straight:
-		print 'kick in the flowline  {}x{:.0f}m > {:.0f}m at {}'.format(straightness, (n-1)*dx, last_two_straight, totaldist)
-		flowline.pop() # remove current (invalid) point from flow line
-		time.pop()
-		dist.pop()
-		velmag.pop()
-		break
-	#    else:
-	#	print 'CHECK:  {}x{:.0f}m < {:.0f}m at {}'.format(straightness, (n-1)*dx, last_two_straight, totaldist)
+        # Stop if kick in the flowlines
+        #n = int(3e3/dx) # about 10 points are used
+        n = 3
+        if len(flowline) >= n:
+            last_two_straight = flowline[-1].distance(flowline[-n])
+            if (n-1) * dx * straightness > last_two_straight:
+        	print 'kick in the flowline  {}x{:.0f}m > {:.0f}m at {}'.format(straightness, (n-1)*dx, last_two_straight, totaldist)
+        	flowline.pop() # remove current (invalid) point from flow line
+        	time.pop()
+        	dist.pop()
+        	velmag.pop()
+        	break
+        #    else:
+        #	print 'CHECK:  {}x{:.0f}m < {:.0f}m at {}'.format(straightness, (n-1)*dx, last_two_straight, totaldist)
 
-	# give the vector its appropriate length and direction
-	dt = dx / vlen # time spent to make the dx distance
-	path = v * (dt * sign) # spatial displacement
-	pt = pt + path # translate the point
-	totaltime += dt
-	totaldist += dx 
+        # give the vector its appropriate length and direction
+        dt = dx / vlen # time spent to make the dx distance
+        path = v * (dt * sign) # spatial displacement
+        pt = pt + path # translate the point
+        totaltime += dt
+        totaldist += dx 
 
-	flowline.append(pt)
-	time.append(totaltime)
-	dist.append(totaldist)
+        flowline.append(pt)
+        time.append(totaltime)
+        dist.append(totaldist)
 
     if len(flowline) > 0:
-	xx, yy = Line(flowline).array() # convert coordinates to numpy arrays
+        xx, yy = Line(flowline).array() # convert coordinates to numpy arrays
     else:
-	xx, yy = np.array([]), np.array([])
+        xx, yy = np.array([]), np.array([])
 
     return xx, yy, np.array(dist), np.array(time), np.array(velmag)
 

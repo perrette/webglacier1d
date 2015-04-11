@@ -170,8 +170,10 @@ def flowline():
     # dataset = request.form.get('dataset')
     form = FlowLineForm(request.args)
 
+    #TODO: remove maxshape argument (related to shape of loaded data) and write 
+    # a fortran routine !
     line = compute_one_flowline(form.x.data, form.y.data, dx=form.dx.data, maxdist=form.maxdist.data,
-                                dataset=form.dataset.data)
+                                dataset=form.dataset.data, maxshape=(500,500))
     return jsonify(line=line)
 
 @app.route('/lines', methods=['GET','POST']) 
