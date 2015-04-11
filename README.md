@@ -15,10 +15,17 @@ Not provided here ! You need to get it yourself...
 
 Dependencies
 ------------
-- numpy
-- [netCDF4](https://github.com/Unidata/netcdf4-python) (see install help on dimarray github)
-- [dimarray (dev)](https://github.com/perrette/dimarray) : please install the latest version from github. The pip version will not work.
-- flask
+Can be installed via `pip install <package>` unless otherwise stated. The version number under bracket indicate 
+the version with which the app was tested. Earlier or later versions might work as well.
+
+- numpy [1.9.2]
+- [netCDF4](https://github.com/Unidata/netcdf4-python) [1.1.7]: see install help on dimarray github
+- [dimarray (dev)](https://github.com/perrette/dimarray) [0.1.9.dev-852f76e]: please install the latest version from github. The pip version will not work 
+- [cartopy](https://github.com/SciTools/cartopy) [0.11.0]: [install instructions](http://scitools.org.uk/cartopy/docs/latest/installing.html#installing) for projections - it has many dependencies and is a bit cumbersome to install. It is used by `dimarray` under the hood.
+- pandas [0.15.2] : used for loading pre-formatted [Box and Decker (2011)](http://bprc.osu.edu/~jbox/pubs/Box_and_Decker_2011_Annals.pdf) data where coordinates for major glaciers are provided.
+
+Web framework:
+- flask 
 - wtforms
 - flask-wtf
 
@@ -43,7 +50,8 @@ Feedback
 --------
 ...is welcome! Note the point is not really to make an app accessible 
 on any possible device, but rather to make a useful tool for research. 
-Any technical suggestions to improve the methods are welcome, for example
-mesh generation and so on.
+Any technical suggestions to improve the methods are welcome. 
+Please see the current [list of issues](https://github.com/perrette/webglacier1d/issues), 
+which is a good platform for discussion.
 
 I also welcome any suggestion for scientific collaboration related to this topic.
