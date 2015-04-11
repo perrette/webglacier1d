@@ -314,7 +314,7 @@ def extractglacier1d(glacier_grid, datasets):
         glacier2d['zb'][bad] = glacier2d['hb'][bad]
 
     # Velocity
-    velocity = _load_data(coords, 'velocity_mag', datasets['velocity_mag'])   # dataset='...'
+    velocity = _load_data(coords, 'velocity_mag', datasets['velocity_mag'], maxshape=(300,300))  # load data at lower resolution : TODO: see Morlighem et al 2012
     assert velocity.units.strip() in ('meter/year','meters/year'), "check out velocity units: "+repr(velocity.units)
     velocity.values /= 3600*24*365.25
     velocity.units = "meters / second"
