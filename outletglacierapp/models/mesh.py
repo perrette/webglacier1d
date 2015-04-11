@@ -314,12 +314,29 @@ def extractglacier1d(glacier_grid, datasets):
         glacier2d['zb'][bad] = glacier2d['hb'][bad]
 
     # Velocity
-    velocity = _load_data(coords, 'velocity_mag', datasets['velocity_mag'], maxshape=(300,300))  # load data at lower resolution : TODO: see Morlighem et al 2012
-    assert velocity.units.strip() in ('meter/year','meters/year'), "check out velocity units: "+repr(velocity.units)
-    velocity.values /= 3600*24*365.25
-    velocity.units = "meters / second"
-    dataset = da.Dataset({'U':velocity})
-    glacier2d = interpolate_data_on_glacier_grid(dataset, glacier2d)
+    if datasets['velocity_mag'] == 'rignot_mouginot2012':
+        # transform bounding box and new grid in own coordinate system
+        from greenland_data import rignot_mouginot2012
+        crs_disk = get_crs(rignot_mouginot2012.MAPPING)
+        crs_target = get_crs(MAPPING)
+        glacier2d_prj, coords_prj = _prepare_load_prj(glacier_grid, crs_disk, crs_target)
+        l,r,b,t = [v*1e3 for v in coords_prj] # km => m
+        # load data  on own grid
+        ds_prj = rignot_mouginot2012.load(bbox=(l,b,r,t))
+        v =  np.sqrt(ds_prj['vx']**2 + ds_prj['vy']**2)
+        glacier2d_prj = interpolate_data_on_glacier_grid(da.Dataset(v=v), glacier2d_prj)
+        # set bamber 2013 coordinates and join the other datasets
+        velocity = da.DimArray(glacier2d_prj["v"].values, axes=glacier2d.axes) # just keep the values
+        velocity.values /= 3600*24*365.25
+        velocity.units = "meters / second"
+        glacier2d["U"] = velocity
+    else:
+        velocity = _load_data(coords, 'velocity_mag', datasets['velocity_mag'], maxshape=(300,300))  # load data at lower resolution : TODO: see Morlighem et al 2012
+        assert velocity.units.strip() in ('meter/year','meters/year'), "check out velocity units: "+repr(velocity.units)
+        velocity.values /= 3600*24*365.25
+        velocity.units = "meters / second"
+        dataset = da.Dataset({'U':velocity})
+        glacier2d = interpolate_data_on_glacier_grid(dataset, glacier2d)
 
     # also add surf / basal velocity /and runoff from the standard dataset.
     ds = da.Dataset()
