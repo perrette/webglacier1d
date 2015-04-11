@@ -373,7 +373,7 @@ drawing.drawLine = function(args) {
     // var $textfield = $('#'+viewid+' textarea')
     var $textfield = $('.toolkit.'+id+' textarea')
       .attr('rows',data.length)
-      .attr('cols',14)
+      .attr('cols',20)
       .attr('margin',5)
 
     $textfield
