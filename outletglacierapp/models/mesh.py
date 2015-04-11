@@ -125,6 +125,8 @@ def make_2d_grid_from_contours(middle, left, right, dx, ny):
     glacier_grid.author = AUTHOR
     glacier_grid.description = "2-dimensional glacier domain"
 
+    assert len(glacier_grid.dims) == 2
+
     return glacier_grid
 
 
@@ -313,7 +315,7 @@ def extractglacier1d(glacier_grid, datasets):
 
     # Velocity
     velocity = _load_data(coords, 'velocity_mag', datasets['velocity_mag'])   # dataset='...'
-    assert velocity.units.strip() == 'meter/year', "check out velocity units: "+repr(velocity.units)
+    assert velocity.units.strip() in ('meter/year','meters/year'), "check out velocity units: "+repr(velocity.units)
     velocity.values /= 3600*24*365.25
     velocity.units = "meters / second"
     dataset = da.Dataset({'U':velocity})
@@ -348,7 +350,7 @@ def _prepare_load_prj(glacier_grid, crs_disk, crs_target):
     pts = crs_disk.transform_points(crs_target, glacier_grid['x_coord'].values, glacier_grid['y_coord'].values)
     x, y = pts[...,0], pts[...,1] # grid 
     glacier2d_prj = glacier_grid.copy()
-    glacier2d_prj['x_coord'] = x
-    glacier2d_prj['y_coord'] = y
+    glacier2d_prj['x_coord'][:] = x
+    glacier2d_prj['y_coord'][:] = y
     coords_prj = _get_glacier_bbox(glacier2d_prj) # bbox for morlighem2014
     return glacier2d_prj, coords_prj
