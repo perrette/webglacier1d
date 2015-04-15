@@ -12,6 +12,7 @@ import time
 import numpy as np
 import dimarray.geo as da
 from dimarray.geo.crs import get_crs
+from dimarray.geo import transform as transform_dima
 
 # load greenland data
 from greenland_data.elevation import load as load_elevation
@@ -34,7 +35,8 @@ def get_coords(nm):
     l,b,r,t = [round(c*1e-3) for c in reg]
     return l,r,b,t
 
-def _load_data(coords, variable, dataset=None, maxshape=None):
+import icedata.greenland
+def _load_data(coords, variable, dataset, maxshape=None, project_on_bamber=True):
     """ load data to be plotted, for a particular glacier 
     and a particular region
 
@@ -50,45 +52,90 @@ def _load_data(coords, variable, dataset=None, maxshape=None):
     -------
     DimArray instance
     """
-    # convert to llx, lly, urx, ury in m
-    l, r, b, u = np.array(coords)*1e3
-    bbox = l,b,r,u
+    mapv = {
+        'bedrock': 'bedrock_elevation',
+        'surface': 'surface_elevation',
+        'bottom': 'bottom_elevation',
+        'velocity_mag': 'surface_velocity',
+        'thickness': 'ice_thickness',
+    }
+    if dataset == 'standard_dataset': dataset = "presentday"
+    if dataset == 'bamber2001': dataset = "presentday"
+    if dataset == 'joughin2010': dataset = "presentday"
 
-    # All data from standard greenland dataset
-    if dataset == 'standard_dataset':
-        data = standard_dataset.load(variable).squeeze()
-        data.dims = ('y','x')
-        data = data[(data.y >= b) & (data.y<=u)][:,(data.x >= l) & (data.x<=r)]
+    if variable in mapv.keys():
+        oldv = variable
+        variable = mapv[variable]
 
-    # Bedrock topography
-    elif variable in ('bedrock', 'surface', 'thickness'):
-        ds = load_elevation(bbox, variable=variable, dataset=dataset, crs=CRS, maxshape=maxshape) #, variable=variable)
-        data = ds[variable]
+    bbox = np.asarray(coords)*1000 # back to meters
 
-    # Velocity
-    elif variable in ('velocity_x', 'velocity_y','velocity_mag','velocity_angle'):
-        velocity = load_velocity(bbox, dataset=dataset, crs=CRS, maxshape=maxshape)   # dataset='...'
-        vx = velocity['vx']
-        vy = velocity['vy']
-        if variable == 'velocity_x': 
-            data = vx
-        elif variable == 'velocity_y': 
-            data = vy
-        elif variable == "velocity_mag":
-            data = (vx**2 + vy**2)**0.5
-            data.units = vx.units
-            data.long_name = "velocity magnitude"
-        elif variable == 'velocity_angle':
-            data = np.arctan(vy/vx)*180/np.pi
-            data.units = "degrees"
-            data.long_name = "angle of the velocity vector from the horizontal (arctan(vy/vx)"
-        else:
-            raise NotImplementedError(variable + ' is not available')
+    mod = getattr(icedata.greenland, dataset)
+    dima = mod.load(variable, bbox=bbox, maxshape=maxshape)
 
-    else:
-        raise NotImplementedError(variable + ' is not available')
+    if project_on_bamber:
+        crsSource = mod.GRID_MAPPING
+        crsTarget = icedata.greenland.bamber2013.GRID_MAPPING
+        if crsSource != crsTarget:
+            print "Transform",dataset,variable,"to Bamber2013 grid mapping"
+            dima = transform_dima(dima, from_crs=crsSource, to_crs=crsTarget)
 
-    return data
+    return dima 
+
+# def _load_data(coords, variable, dataset=None, maxshape=None):
+#     """ load data to be plotted, for a particular glacier 
+#     and a particular region
+#
+#     Parameter
+#     ---------
+#     coords : coordinate box in km (left, right, bottom, up)
+#         in the coordinate system from STANDARD_DATASET
+#     variable : variable to load
+#     dataset : data source, optional 
+#     maxshape : maximum shape of laoded data (sub-sampling when loading to save time)
+#     
+#     Returns
+#     -------
+#     DimArray instance
+#     """
+#     # convert to llx, lly, urx, ury in m
+#     l, r, b, u = np.array(coords)*1e3
+#     bbox = l,b,r,u
+#
+#     # All data from standard greenland dataset
+#     if dataset == 'standard_dataset':
+#         data = standard_dataset.load(variable).squeeze()
+#         data.dims = ('y','x')
+#         data = data[(data.y >= b) & (data.y<=u)][:,(data.x >= l) & (data.x<=r)]
+#
+#     # Bedrock topography
+#     elif variable in ('bedrock', 'surface', 'thickness'):
+#         ds = load_elevation(bbox, variable=variable, dataset=dataset, crs=CRS, maxshape=maxshape) #, variable=variable)
+#         data = ds[variable]
+#
+#     # Velocity
+#     elif variable in ('velocity_x', 'velocity_y','velocity_mag','velocity_angle'):
+#         velocity = load_velocity(bbox, dataset=dataset, crs=CRS, maxshape=maxshape)   # dataset='...'
+#         vx = velocity['vx']
+#         vy = velocity['vy']
+#         if variable == 'velocity_x': 
+#             data = vx
+#         elif variable == 'velocity_y': 
+#             data = vy
+#         elif variable == "velocity_mag":
+#             data = (vx**2 + vy**2)**0.5
+#             data.units = vx.units
+#             data.long_name = "velocity magnitude"
+#         elif variable == 'velocity_angle':
+#             data = np.arctan(vy/vx)*180/np.pi
+#             data.units = "degrees"
+#             data.long_name = "angle of the velocity vector from the horizontal (arctan(vy/vx)"
+#         else:
+#             raise NotImplementedError(variable + ' is not available')
+#
+#     else:
+#         raise NotImplementedError(variable + ' is not available')
+#
+#     return data
 
 def get_dict_data(variable, dataset, coords, zoom=300e3, maxshape=(200,200)):
     """ read data and return it as json format for the javascript plotting
@@ -118,7 +165,7 @@ def get_dict_data(variable, dataset, coords, zoom=300e3, maxshape=(200,200)):
     # projections)
 
     if variable == 'velocity_mag':
-        units = dim_a.units.strip()
+        units = getattr(dim_a,"units","unknown").strip()
         # dim_a = np.log(np.clip(dim_a, 1e-2, np.inf)) # remove zero numbers
         # dim_a.units = "ln("+units+")"
         dim_a = np.log10(np.clip(dim_a, 1e-2, np.inf)) # remove zero numbers
@@ -155,7 +202,8 @@ def get_dict_data(variable, dataset, coords, zoom=300e3, maxshape=(200,200)):
         data_range = [float(z.min()), float(z.max())],
         x_range = [x[0], x[-1]],
         y_range = [y[0], y[-1]],
-        units = dim_a.units,
+        # units = dim_a.units,
+        units = getattr(dim_a,"units","unknown").strip(),
         variable = variable,
     )
 

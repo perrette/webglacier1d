@@ -23,6 +23,7 @@ from greenland_data.standard_dataset import MAPPING
 # from greenland_data.velocity import load as load_velocity
 # from greenland_data import standard_dataset
 
+
 TODAY = datetime.date.today().strftime("%Y%m%d")
 AUTHOR = "mahe.perrette@pik-potsdam.de"
 WORK = 'work' # work directory
@@ -341,6 +342,7 @@ def extractglacier1d(glacier_grid, datasets):
     # also add surf / basal velocity /and runoff from the standard dataset.
     ds = da.Dataset()
     for nm in ['surfvelmag','balvelmag','runoff']:
+    # for nm in ['runoff']:
         a = _load_data(coords, nm, 'standard_dataset')
         a.values /= 3600*24*365.25
         a.units = "meters / second"
@@ -353,6 +355,14 @@ def extractglacier1d(glacier_grid, datasets):
     smb.values /= 3600*24*365.25
     smb.units = "meters / second"
     dataset = da.Dataset({'smb':smb})
+    glacier2d = interpolate_data_on_glacier_grid(dataset, glacier2d)
+
+    # Thinning rate
+    dhdt = _load_data(coords, 'dhdt', 'standard_dataset')
+    assert dhdt.units.strip() == 'meters/year', "check out smb units"
+    dhdt.values /= 3600*24*365.25
+    dhdt.units = "meters / second"
+    dataset = da.Dataset({'dhdt':dhdt})
     glacier2d = interpolate_data_on_glacier_grid(dataset, glacier2d)
 
     glacier2d.write_nc("outletglacierapp/appdata/glacier2d.nc")
