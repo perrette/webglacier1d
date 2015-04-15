@@ -379,3 +379,209 @@ def _prepare_load_prj(glacier_grid, crs_disk, crs_target):
     glacier2d_prj['y_coord'] =  da.DimArray(y, glacier2d_prj.axes)
     coords_prj = _get_glacier_bbox(glacier2d_prj) # bbox for morlighem2014
     return glacier2d_prj, coords_prj
+
+#
+# Define a main script for modular use of the code
+#
+def main():
+    """Command-line utility to build mesh and aggregate to glacier, in a modular way
+
+    Examples
+    --------
+    # Make grid and save it to file
+    mesh -l lines-petermann.json --write-grid petermann-grid.nc --dx 100 --ny 20
+
+    # Add velocity data on it (--short for U instead of surface_velocity)
+    mesh --glacier1d glacier1d.nc --grid petermann-grid.nc --dataset rignot_mouginot2012 -v surface_velocity --short --suffix '_R12'
+    mesh --glacier1d glacier1d.nc --grid petermann-grid.nc --dataset presentday -v surface_velocity --short --suffix '_J10'
+
+    # Add bedrock data
+    mesh --glacier1d glacier1d.nc --grid petermann-grid.nc --dataset morlighem2014 -v surface_elevation,bedrock_elevation --short --suffix '_M13'
+    mesh --glacier1d glacier1d.nc --grid petermann-grid.nc --dataset bamber2013 -v surface_elevation,bedrock_elevation --short --suffix '_B13'
+
+    # Add SMB, elevation rate, runoff...
+    mesh --glacier1d glacier1d.nc --grid petermann-grid.nc --dataset presentday -v smb --short --suffix '_E09'
+    mesh --glacier1d glacier1d.nc --grid petermann-grid.nc --dataset presentday -v dhdt --short --suffix '_C09'
+    mesh --glacier1d glacier1d.nc --grid petermann-grid.nc --dataset presentday -v runoff --short --suffix '_C09'
+    """
+    # This should be used for loading data instead of greenmap's _load_data
+    import icedata
+
+    # =====================
+    # Parse input arguments
+    # =====================
+    import argparse
+    parser = argparse.ArgumentParser(__doc__)
+
+    # define the grid
+    group = parser.add_mutually_exclusive_group() #"Define the grid: provide either glacier outline or grid")
+    # ...provided as user-input
+    group.add_argument("-g","--grid", help="netCDF file containing the grid, if already computed (in BA2014 CRS)")
+    group.add_argument("-l","--lines", help="json file containing the lines (labelled with left, middle, right) in BA2013 coordinate system")
+    # ...create grid from outlines
+    group = parser.add_argument_group("create mesh from lines")
+    group.add_argument("--dx", type=float, default=100, help="resolution along main line")
+    group.add_argument("--ny", type=int, default=20, help="number of points cross-flow")
+
+    # input data to interpolate on the grid
+    group = parser.add_argument_group("Input data to grid")
+    # group.add_argument("-d","--data",help="netCDF file of input data")
+    group.add_argument("--domain", default="greenland",help="domain (to load from icedata)")
+    group.add_argument("--maxshape", default=500, type=int, help="max size of box side to be loaded")
+    group.add_argument("-d","--dataset",help="dataset name (to load from icedata)")
+    # group.add_argument("-m","--mapping",default="BA2013",choices=["BA2013","RM2012"], help="grid mapping, from which to projected onto BA2013")
+    group.add_argument("-v","--variable",help="variable(s) as -v 'name' or -v 'nm1,nm2,nm3'")
+    # group.add_argument("--prefix", action="store_true", help="prefix variable name with dataset name - useful for dataset comparison")
+    group.add_argument("--suffix", default="", help="add suffix to variable - useful for dataset comparison")
+    group.add_argument("--prefix", default="", help="add prefix to variable - useful for dataset comparison")
+    group.add_argument("--short", action="store_true", help="use H, W etc... as abbreviations")
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--fill-nans",type=float, help="fill nans with this value before averaging?")
+    group.add_argument("--skip-nans", action="store_true", help="skip nans when averaging?")
+
+    group = parser.add_argument_group("Smoothing")
+    parser.add_argument("--smooth1d", type=int, default=0, help="half-window size of a Gaussian kernel to smooth glacier1d, default 0, no smoothing")
+    group.add_argument("--smooth2d",type=int, default=0, help="number of grid cells to use for smoothing 2-D field prior to interpolation. By default 0, no smoothing.")
+
+    # outputs
+    group = parser.add_argument_group("Outputs")
+    group.add_argument("--write-grid",help="netCDF file where grid should be written")
+    group.add_argument("--glacier2d",help="netCDF file where gridded data should be written in - it may contain only grid info if no other data was provided")
+    group.add_argument("--glacier1d",help="file name to write the averaged glacier1d")
+    group.add_argument("-O","--overwrite", action="store_true", help="append by default, unless this is on") 
+
+    arg = parser.parse_args()
+
+    # =====================
+    # Create the mesh if not provided
+    # =====================
+    if (arg.lines is None and arg.grid is None):
+        # raise TypeError("Input grid must be provided via glacier outline or netCDF file (e.g. previously generated glacier output)")
+        parser.print_help()
+        print("          ")
+        print("!!!!!!!!!!")
+        print("Input grid must be provided via glacier outline or netCDF file (e.g. previously generated glacier output)")
+        print("!!!!!!!!!!")
+        sys.exit()
+
+    if (arg.write_grid is None and arg.glacier2d is None and arg.glacier1d is None):
+        # raise TypeError("Input grid must be provided via glacier outline or netCDF file (e.g. previously generated glacier output)")
+        parser.print_help()
+        print("          ")
+        print("!!!!!!!!!!")
+        print("No output file provided !")
+        print("!!!!!!!!!!")
+        sys.exit()
+
+    if arg.lines is not None:
+        lines = json.load(open(arg.lines))
+        def _getl(key):
+            " get a line "
+            line = filter(lambda line: line['id'].lower() == key, lines)[0]
+            return Line([Point(pt['x']*1e3, pt['y']*1e3) for pt in line['values']])
+    # def make_2d_grid_from_contours(middle, left, right, dx, ny):
+        glacier_grid = make_2d_grid_from_contours(_getl('middle'), _getl('left'), _getl('right'), dx=arg.dx, ny=arg.ny)
+        # write to output
+        if arg.write_grid:
+            print("Write grid to", arg.write_grid)
+            glacier_grid.write_nc(arg.write_grid, 'w') # write mesh to disk
+
+    else:
+        assert arg.grid is not None
+        ncgrid = arg.grid # or arg.ncout
+        glacier_grid = da.read_nc(ncgrid, ["x_coord", "y_coord"]) # only read grid !!
+
+    if arg.dataset is None:
+        print("No dataset provided, exit")
+        sys.exit()
+
+    # ===========================
+    # Load (and interpolate) data
+    # ===========================
+    l,r,b,t = _get_glacier_bbox(glacier_grid)
+    bbox = np.array([l,r,b,t])*1e3 # in meters
+
+    # load relevant icedata module
+    mod = getattr(icedata, arg.domain)
+    mod = getattr(mod, arg.dataset)
+
+    # check the need for projection (grid is assumed to be in BA2013)
+    grid_mapping = icedata.greenland.bamber2013.GRID_MAPPING
+    print(mod,arg.dataset)
+    transform = mod.GRID_MAPPING != grid_mapping
+    # transform = arg.mapping != 'BA2013'
+
+    def _fill_nans(dataset, val):
+        """ fill nan values ?
+        """
+        for k in dataset.keys():
+            dataset.values[np.isnan(dataset.values)] = val
+
+    def _smooth2d(dataset, val):
+            raise NotImplementedError("No Smoothing Yet")
+
+    variables = arg.variable.split(",")
+
+    # If data is defined on another grid, just transform the target glacier_grid to that other
+    # coordinate system and work on it
+    if transform:
+        # bbox2 = transform_bbox(bbox, grid_mapping, mod.GRID_MAPPING)
+        print("Transform grid from", grid_mapping, " to ",mod.GRID_MAPPING)
+        glacier_grid2, bbox2 = transform_grid(glacier_grid, grid_mapping, mod.GRID_MAPPING)
+        dataset = mod.load(variables, bbox=np.asarray(bbox2), maxshape=(arg.maxshape,arg.maxshape))
+        if arg.fill_nans is not None:
+            _fill_nans(dataset, arg.fill_nans)
+        # smooth2d ?
+        if arg.smooth2d > 0:
+            _smooth2d(dataset, arg.smooth2d)
+        # interpolate on glacier grid
+        interpolate_data_on_glacier_grid(dataset, glacier_grid2)
+        # now copy values on original glacier grid
+        for k in variables:
+            glacier_grid[k] = da.DimArray(glacier_grid2[k].values, axes=glacier_grid.axes)
+            glacier_grid[k].attrs.update(glacier_grid2[k].attrs)
+
+    else:
+        dataset = mod.load(variables, bbox=bbox, maxshape=(arg.maxshape,arg.maxshape))
+        if arg.fill_nans is not None:
+            _fill_nans(dataset, arg.fill_nans)
+        if arg.smooth2d > 0:
+            _smooth2d(dataset, arg.smooth2d)
+        interpolate_data_on_glacier_grid(dataset, glacier_grid)
+
+    # Rename variables?
+    if arg.short:
+        mapshort = {
+            "surface_elevation":"hs",
+            "bottom_elevation":"hb",
+            "bedrock_elevation":"zb",
+            "ice_thickness":"H",
+            "glacier_width":"W",
+            "surface_velocity":"U",
+        }
+        glacier_grid.rename_keys({k:mapshort.pop(k,k) for k in glacier_grid.keys()}, inplace=True)
+        print (glacier_grid.keys())
+    if arg.suffix or arg.prefix:
+        glacier_grid.rename_keys({k:arg.prefix+k+arg.suffix for k in glacier_grid.keys() if k not in ['x_coord','y_coord']}, inplace=True)
+
+    # Write grid data to disk (append to existing file by default)
+    mode = "w" if arg.overwrite else "a+"
+    if arg.glacier2d:
+        print("Write glacier2d (interpolated, for debug) to", arg.glacier2d)
+        glacier_grid.write_nc(arg.glacier2d, mode=mode)
+
+    # Average toward a glacier1d?
+    if arg.glacier1d:
+        print("Write glacier1d to", arg.glacier1d)
+        glacier1d = glacier_crossflow_average(glacier_grid, skipna=arg.skip_nans)
+        glacier1d.write_nc(arg.glacier1d, mode=mode)
+
+    print("Done")
+
+# At some point, probably better to use that one:
+# data_rm_samegrid = transform(data_rm, from_crs=rm.grid_mapping, to_crs=pdg.grid_mapping, xt=data_pdg.x, yt=data_pdg.y)
+    pass
+
+if __name__ == '__main__':
+    main()
