@@ -3,6 +3,8 @@ webglacier1d
 
 This is a python-javascript project to visualize 2-D ice sheet data, draw a glacier outline, and extract relevant, averaged data along the 1-D profile.
 
+[See snapshots here](https://www.pik-potsdam.de/members/perrette/egu2015-webglacier1d/poster-perrette-webtool-egu2015.png)
+
 Datasets
 --------
 Not provided here ! You need to get it yourself...
