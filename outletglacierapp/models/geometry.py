@@ -411,6 +411,7 @@ class Line(object):
         """ resample a line with a particular grid step
         """
         pts = []
+        assert dx is not None or n is not None, "must provide either n or dx to reample a line"
 
         # subdivide to maintain a given grid step
         if dx is not None:
