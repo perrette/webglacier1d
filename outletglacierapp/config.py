@@ -2,7 +2,11 @@
 """
 import netCDF4 as nc
 import os
-from models.greenland_data import standard_dataset, boxdecker2011 as bd
+from models import boxdecker2011 as bd
+from icedata.greenland.presentday import get_file
+# from models.greenland_data import standard_dataset, boxdecker2011 as bd
+
+NCFILESTD = get_file()
 
 curdir = os.path.abspath(os.path.dirname(__name__)) # this directory
 # datadir=os.path.join(curdir, os.path.pardir, 'appdata') # data directory above that one
@@ -10,7 +14,7 @@ datadir=os.path.join(curdir, 'appdata') # data directory above that one, for som
 datadir=os.path.join(curdir, 'outletglacierapp', 'appdata') # data directory above that one, for some reason no need for pardir...
 
 # get variables present in the standard_greenland dataset
-ds = nc.Dataset(standard_dataset.NCFILE)
+ds = nc.Dataset(NCFILESTD)
 stdvariables = [v for v in ds.variables.keys() \
                 if ds.variables[v].dimensions==('time','y1','x1')] # 2D (plus singleton time) variable
 ds.close()

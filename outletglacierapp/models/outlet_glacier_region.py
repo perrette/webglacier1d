@@ -7,11 +7,14 @@ import numpy as np
 import cartopy.crs as ccrs
 from dimarray.geo.crs import get_crs
 
-from . import cresis
+# from . import cresis
 from . import boxdecker2011
 
+# from .standard_dataset import MAPPING as MAPPING_SD
+from icedata.greenland.presentday import GRID_MAPPING as MAPPING_SD
+from icedata.greenland import cresis
+
 MAPPING_CRESIS = cresis.MAPPING
-from .standard_dataset import MAPPING as MAPPING_SD
 
 GLACIER = None
 ZOOM = 150e3

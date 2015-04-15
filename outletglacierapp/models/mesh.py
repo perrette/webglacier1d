@@ -15,10 +15,10 @@ from dimarray.geo.crs import get_crs, LatitudeLongitude
 
 # local module to create the mesh
 from geometry import Line, Segment, prolonge_line, Point
-from greenmap import _load_data
+from greenmap import _load_data, MAPPING
 
 # # load greenland data
-from greenland_data.standard_dataset import MAPPING
+# from greenland_data.standard_dataset import MAPPING
 # from greenland_data.elevation import load as load_elevation
 # from greenland_data.velocity import load as load_velocity
 # from greenland_data import standard_dataset
@@ -243,15 +243,16 @@ def extractglacier1d(glacier_grid, datasets):
         # just project the coords onto Morlighem grid.
         # also load Bamber et al 2013 as fill values
 
-        from greenland_data import morlighem2014
-        crs_disk = get_crs(morlighem2014.MAPPING)
+        from icedata.greenland import morlighem2014
+        crs_disk = get_crs(morlighem2014.GRID_MAPPING)
         crs_target = get_crs(MAPPING)
         glacier2d_prj, coords_prj = _prepare_load_prj(glacier_grid, crs_disk, crs_target)
 
         # load data
         l,r,b,t = [v*1e3 for v in coords_prj] # km => m
-        indexer = {'x':slice(l,r), 'y':slice(b,t)}
-        ds_prj = morlighem2014.load(['bed', 'surface', 'thickness'], indexer, tol=1e3) # 1000 m tolerance, since 150 res
+        # indexer = {'x':slice(l,r), 'y':slice(b,t)}
+        ds_prj = morlighem2014.load(['bed', 'surface', 'thickness'], bbox=[l,r,b,t]) # 1000 m tolerance, since 150 res
+        # ds_prj = morlighem2014.load(['bed', 'surface', 'thickness'], indexer, tol=1e3) # 1000 m tolerance, since 150 res
         ds_prj.rename_keys({'bed':'zb', 'surface':'hs','thickness':'H'}, inplace=True)
         ds_prj['H'][np.isnan(ds_prj['H'])] = 0.
         ds_prj.write_nc("test_morlighem_raw.nc")
@@ -317,13 +318,14 @@ def extractglacier1d(glacier_grid, datasets):
     # Velocity
     if datasets['velocity_mag'] == 'rignot_mouginot2012':
         # transform bounding box and new grid in own coordinate system
-        from greenland_data import rignot_mouginot2012
-        crs_disk = get_crs(rignot_mouginot2012.MAPPING)
+        from icedata.greenland import rignot_mouginot2012
+        crs_disk = get_crs(rignot_mouginot2012.GRID_MAPPING)
         crs_target = get_crs(MAPPING)
         glacier2d_prj, coords_prj = _prepare_load_prj(glacier_grid, crs_disk, crs_target)
         l,r,b,t = [v*1e3 for v in coords_prj] # km => m
         # load data  on own grid
-        ds_prj = rignot_mouginot2012.load(bbox=(l,b,r,t))
+        # ds_prj = rignot_mouginot2012.load(bbox=(l,b,r,t))
+        ds_prj = rignot_mouginot2012.load(['vx','vy'], bbox=[l,r,b,t]) # 1000 m tolerance, since 150 res
         v =  np.sqrt(ds_prj['vx']**2 + ds_prj['vy']**2)
         glacier2d_prj = interpolate_data_on_glacier_grid(da.Dataset(v=v), glacier2d_prj)
         # set bamber 2013 coordinates and join the other datasets

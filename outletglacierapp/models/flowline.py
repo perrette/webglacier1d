@@ -7,9 +7,13 @@ import matplotlib.pyplot as plt
 import dimarray.geo as da
 from dimarray.geo.crs import get_crs
 
-from greenland_data.velocity import load as load_velocity
-from greenland_data.rignot_mouginot2012 import MAPPING as MAPPING_RM2012
-from greenland_data.standard_dataset import MAPPING as MAPPING_SD
+# from greenland_data.velocity import load as load_velocity
+# from greenland_data.rignot_mouginot2012 import MAPPING as MAPPING_RM2012
+# from greenland_data.standard_dataset import MAPPING as MAPPING_SD
+import icedata
+from icedata.greenland.rignot_mouginot2012 import GRID_MAPPING as MAPPING_RM2012
+from icedata.greenland.presentday import GRID_MAPPING as MAPPING_SD
+
 from helper import keepincache
 
 # get equivalent cartopy transformations
@@ -17,6 +21,9 @@ CRS_RM2012 = get_crs(MAPPING_RM2012)
 CRS_SD = get_crs(MAPPING_SD)
 
 from geometry import Line, Point, Vector
+
+def load_velocity(dataset, maxshape=None):
+    return getattr(icedata.greenland,dataset).load(['vx','vy'], maxshape=maxshape)
 
 PARAMS = dict(
     dx = 0.3,        		# along-flow grid step

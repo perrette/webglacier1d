@@ -5,6 +5,7 @@ with a selection of :
     - regions to investigate
         Box and Decker (2011) pre-defined glaciers
 """
+from __future__ import absolute_import
 import sys
 import hashlib
 import time
@@ -15,18 +16,19 @@ from dimarray.geo.crs import get_crs
 from dimarray.geo import transform as transform_dima
 
 # load greenland data
-from greenland_data.elevation import load as load_elevation
-from greenland_data.velocity import load as load_velocity
-from greenland_data.outlet_glacier_region import get_region
-from greenland_data import standard_dataset
-from greenland_data.standard_dataset import MAPPING # coordinate system
+# from greenland_data.elevation import load as load_elevation
+# from greenland_data.velocity import load as load_velocity
+import icedata.greenland
+# from greenland_data import standard_dataset
+# from greenland_data.standard_dataset import MAPPING # coordinate system
 # from greenland_data.rignot_mouginot2012 import MAPPING # coordinate system
 
-
-CRS = get_crs(MAPPING) # coordinate system 
-
 # glacier regions
-from greenland_data import boxdecker2011 as bd
+from .outlet_glacier_region import get_region
+from . import boxdecker2011 as bd
+
+MAPPING = icedata.greenland.bamber2013.GRID_MAPPING
+CRS = get_crs(MAPPING) # coordinate system 
 
 def get_coords(nm):
     """ get coordinates of a glacier as left, right, bottom, top in km
@@ -35,7 +37,6 @@ def get_coords(nm):
     l,b,r,t = [round(c*1e-3) for c in reg]
     return l,r,b,t
 
-import icedata.greenland
 def _load_data(coords, variable, dataset, maxshape=None, project_on_bamber=True):
     """ load data to be plotted, for a particular glacier 
     and a particular region
