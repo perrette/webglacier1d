@@ -1,7 +1,7 @@
 #!/usr/bin/python
 """ Main routine to derive glacier geometry from velocity and elevation data
 """
-from __future__ import division
+from __future__ import division, print_function
 
 import os, sys, copy, warnings
 import datetime
@@ -79,7 +79,7 @@ def make_2d_grid_from_contours(middle, left, right, dx, ny):
 
     #for i, pt in enumerate(pts):
     for i, pt in enumerate(pts):
-        print '\rDiscretize: slice {} / {}'.format(i, len(pts)),
+        print( '\rDiscretize: slice {} / {}'.format(i, len(pts)),)
 
         # determine a local segment to draw an orthogonal line from
         if i == 0:
@@ -167,7 +167,7 @@ def interpolate_data_on_glacier_grid(dataset, glacier2d):
 
     return glacier2d
 
-def glacier_crossflow_average(glacier2d):
+def glacier_crossflow_average(glacier2d, skipna=False):
     """ Average 2-D glacier data into a flowline glacier
 
     Glacier data is averaged along each cross section.
@@ -194,13 +194,13 @@ def glacier_crossflow_average(glacier2d):
     glacier1d['W'].units = 'meters'
 
     for nm in glacier2d.keys():
-        glacier1d[nm] = glacier2d[nm].mean(axis=1, skipna=False)
+        glacier1d[nm] = glacier2d[nm].mean(axis=1, skipna=skipna)
         glacier1d[nm]._metadata(glacier2d[nm]._metadata())
 
         # check nans
         if np.any(np.isnan(glacier1d[nm])):
             # Fill up the NaNs
-            print glacier1d[nm].values
+            print( glacier1d[nm].values)
             warnings.warn("NaNs remain after averaging glacier for variable "+nm)
 
     # add lon/lat info based on back-transformed x_coord, y_coord
@@ -363,11 +363,19 @@ def extractglacier1d(glacier_grid, datasets):
     return glacier1d
 
 
+def transform_grid(glacier_grid, source, target):
+    """ same as _prepare_load_prj but with CF1.6 parameters instead of cartopy CRS instances as argument
+    """
+    src = get_crs(source)
+    tar = get_crs(target)
+    glacier2d_prj, bbox_prj = _prepare_load_prj(glacier_grid, src, tar)
+    return glacier2d_prj, np.array(bbox_prj)*1000 # _Get_glacier_bbox makes it in km
+
 def _prepare_load_prj(glacier_grid, crs_disk, crs_target):
     pts = crs_disk.transform_points(crs_target, glacier_grid['x_coord'].values, glacier_grid['y_coord'].values)
     x, y = pts[...,0], pts[...,1] # grid 
     glacier2d_prj = glacier_grid.copy()
-    glacier2d_prj['x_coord'][:] = x
-    glacier2d_prj['y_coord'][:] = y
+    glacier2d_prj['x_coord'] = da.DimArray(x, glacier2d_prj.axes)
+    glacier2d_prj['y_coord'] =  da.DimArray(y, glacier2d_prj.axes)
     coords_prj = _get_glacier_bbox(glacier2d_prj) # bbox for morlighem2014
     return glacier2d_prj, coords_prj
