@@ -62,38 +62,31 @@ function initialize() {
 
 $(document).ready( function() {
   drawing.addToolkit();
-
-  // modify a few things
-    
-  // $("#save-lines")
-  // .on('click', function() {
-  //   postLinesToServer( function() {console.log('lines saved')});
-  // })
-  //
-  // $("#download")
-  // .on('click', function() {
-  //   postLinesToServer( function() {
-  //     
-  //   });
-  // })
 })
+
+
+// Contains functions useful to interact with Google Map API
+var gmaptools = {};
+
+// function to extract x, y coordinates of points along a polyline.
+gmaptools.get_polyline = function(gline) {
+  var at;  // point coordinates
+  var path = gline.getPath(); // path of a polyline
+  var res = []; // result to be filled
+  for (var i=0; i<path.getLength(); i++) {
+    at = path.getAt(i);
+    res.push( {x: at.L, y: at.H} );
+  };
+  return res;
+} ;
+
 
 // override drawing functions to work with googlemap
 drawing.getLines = function() {
-  // get line coordinates
-  // console.log("CHECK LINES")
-  // console.log(lines)
-  // console.log(lines[0].gline.getPath())
   return lines.map(function(d){
     return {
       id: d.id,
-      values: d.gline.getPath().j.map(function(df) {
-        return {
-          x:df.D,    // These letters are funny, change over time...TODO: read the doc and find proper way
-          // x:df.B, // This used to work
-          y:df.k
-        }
-      })
+      values: gmaptools.get_polyline(gline)
     }
   })
 }
