@@ -18,12 +18,12 @@ Not provided here ! You need to get it yourself...
 Dependencies
 ------------
 Can be installed via `pip install <package>` unless otherwise stated. The version number under bracket indicate 
-the version with which the app was tested. Earlier or later versions might work as well.
+the version with which the app was tested. Earlier or later versions might work as well. For installations requiring more than just pip, [see instructions here](https://github.com/perrette/python-install).
 
 - numpy [1.9.2]
-- [netCDF4](https://github.com/Unidata/netcdf4-python) [1.1.7]: see install help on dimarray github
+- [netCDF4](https://github.com/Unidata/netcdf4-python) [1.1.7] - [see instructions here](https://github.com/perrette/python-install/blob/master/README.md#netcdf4)
 - [dimarray (dev)](https://github.com/perrette/dimarray) [0.1.9.dev-852f76e]: please install the latest version from github. The pip version will not work 
-- [cartopy](https://github.com/SciTools/cartopy) [0.11.0]: [install instructions](http://scitools.org.uk/cartopy/docs/latest/installing.html#installing) for projections - it has many dependencies and is a bit cumbersome to install. It is used by `dimarray` under the hood.
+- [cartopy](https://github.com/SciTools/cartopy) [0.11.0]: used for grid projections, [see instructions here](https://github.com/perrette/python-install/blob/master/README.md#cartopy)
 - pandas [0.15.2] : used for loading pre-formatted [Box and Decker (2011)](http://bprc.osu.edu/~jbox/pubs/Box_and_Decker_2011_Annals.pdf) data where coordinates for major glaciers are provided.
 
 Web framework:
