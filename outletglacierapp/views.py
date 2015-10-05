@@ -80,7 +80,13 @@ def set_form(form, session):
 
 @app.route('/')
 def index():
+    # return redirect(url_for('draw_basin'))
     return redirect(url_for('drawing'))
+
+@app.route('/basin')
+def draw_basin():
+    form = get_map_form(session)
+    return render_template('draw_basin.html', form=form)
 
 @app.route('/drawing')
 def drawing():
@@ -131,24 +137,18 @@ def mapdata():
     r = 1
     currentwidth = form.right.data - form.left.data
     width = r*(form.top.data - form.bottom.data)
-    form.right.data += (width-currentwidth)/2 
-    form.left.data -= (width-currentwidth)/2 
+    # form.right.data += (width-currentwidth)/2 
+    # form.left.data -= (width-currentwidth)/2 
+    form.right.data = form.left.data + width # maintain the left side...
     session['coords'] = [form.left.data, form.right.data, form.bottom.data, form.top.data]
-    
 
     coords = session['coords'] # coordinates (can be custom)
     variable = session['variable'] # coordinates (can be custom)
     dataset = session['dataset'] # coordinates (can be custom)
 
-    print 'maxpixels', form.maxpixels.data, session['maxpixels']
-    # if form.maxpixels.data == 100: 1/0
-
     maxshape = (session['maxpixels'],)*2
     data = get_json_data(variable, dataset, coords, maxshape=maxshape)
     return make_response(data) #, type='application/json')
-
-    # data = get_dict_data(session)
-    # return jsonify(**data)
 
 @app.route('/glacierinfo')
 def glacierinfo():
