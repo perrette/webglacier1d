@@ -19,6 +19,7 @@ from dimarray.geo import transform as transform_dima
 # from greenland_data.elevation import load as load_elevation
 # from greenland_data.velocity import load as load_velocity
 import icedata.greenland
+from icedata.common import transform_bbox
 # from greenland_data import standard_dataset
 # from greenland_data.standard_dataset import MAPPING # coordinate system
 # from greenland_data.rignot_mouginot2012 import MAPPING # coordinate system
@@ -71,14 +72,27 @@ def _load_data(coords, variable, dataset, maxshape=None, project_on_bamber=True)
     bbox = np.asarray(coords)*1000 # back to meters
 
     mod = getattr(icedata.greenland, dataset)
-    dima = mod.load(variable, bbox=bbox, maxshape=maxshape)
 
+    data_bbox = bbox
     if project_on_bamber:
         crsSource = mod.GRID_MAPPING
         crsTarget = icedata.greenland.bamber2013.GRID_MAPPING
         if crsSource != crsTarget:
-            print "Transform",dataset,variable,"to Bamber2013 grid mapping"
-            dima = transform_dima(dima, from_crs=crsSource, to_crs=crsTarget)
+            data_bbox = transform_bbox(bbox, crsTarget, crsSource)
+        else:
+            project_on_bamber = False  # already the right CRS
+
+    dima = mod.load(variable, bbox=data_bbox, maxshape=maxshape)
+
+    if project_on_bamber:
+        dima = transform_dima(dima, from_crs=crsSource, to_crs=crsTarget)
+
+        # crop to required coordinate system...
+        dima = dima.ix[(dima.y >= bbox[2]) & 
+                       (dima.y <= bbox[3]),  
+                       (dima.x >= bbox[0]) & 
+                       (dima.x <= bbox[1])  
+                       ]
 
     return dima 
 
