@@ -10,8 +10,7 @@ Dependencies
 Can be installed via `pip install <package>` unless otherwise stated. The version number under bracket indicate 
 the version with which the app was tested. Earlier or later versions might work as well. For installations requiring more than just pip, [see instructions here](https://github.com/perrette/python-install).
 
-- [icedata (dev)](https://github.com/perrette/icedata) : install last version from github (see dependencies there)
-- [cartopy](https://github.com/SciTools/cartopy) [0.11.0]: used for grid projections, [see instructions here](https://github.com/perrette/python-install/blob/master/README.md#cartopy)
+- [icedata (dev)](https://github.com/perrette/icedata) : install last version from github. It includes a number of dependencies such as numpy, netCDF4, dimarray, cartopy.
 - pandas [0.15.2] : used for loading pre-formatted [Box and Decker (2011)](http://bprc.osu.edu/~jbox/pubs/Box_and_Decker_2011_Annals.pdf) data where coordinates for major glaciers are provided.
 
 Web framework:
