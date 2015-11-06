@@ -10,7 +10,7 @@ var glacier1d = {};  // deal with plotting glacier1d
 glacier1d.subplots = [];
 
 glacier1d.init = function() {
-  // glacier1d.makeit();
+  glacier1d.makeit();
   glacier1d.vizualizeit();
   glacier1d.addUI();
 
