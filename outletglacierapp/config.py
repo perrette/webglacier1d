@@ -19,8 +19,6 @@ stdvariables = [v for v in ds.variables.keys() \
                 if ds.variables[v].dimensions==('time','y1','x1')] # 2D (plus singleton time) variable
 ds.close()
 
-bx2013 = bd.load()  
-
 # Construct the list of available dataset
 # appears as variable - source
 
@@ -64,10 +62,15 @@ dataset_default = 'bedrock - bamber2013'
 #
 # To select between various regions to display
 #
-glacier_choices = bx2013.index.tolist()
-glacier_choices = sorted(glacier_choices)
-glacier_choices.insert(0, "Custom")
-glacier_choices.insert(1, "Greenland")
+try:
+    bx2013 = bd.load()  
+    glacier_choices = bx2013.index.tolist()
+    glacier_choices = sorted(glacier_choices)
+    glacier_choices.insert(0, "Custom")
+    glacier_choices.insert(1, "Greenland")
+except:
+    glacier_choices = ["Greenland", "Custom"]
+
 
 # parameters which define glacier region
 glacier_default = 'Greenland'
