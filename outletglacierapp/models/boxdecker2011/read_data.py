@@ -41,7 +41,7 @@ def table2():
     data.index = inds
     return data.sort()
 
-def join(tab1, tab2):
+def join_tables(tab1, tab2):
     data = tab1.join(tab2, rsuffix='_tab2', how='outer')
     del data['Region_tab2']
 
@@ -75,22 +75,26 @@ def join(tab1, tab2):
         
     return data
 
+def make_boxdecker2013_dataframe():
+    tab1 = table1()
+    tab2 = table2()
+    return join_tables(tab1, tab2)
+
 def load():
     """ Load data...
     """
-    hdfname = datadir+'boxdecker2011.hdf5'
-    if exists(hdfname):
+    fname = datadir+'boxdecker2011.json'
+    if exists(fname):
         #data = pd.DataFrame.load(hdfname) # does not work in 0.13.0 due to some new bug
-        data = pd.DataFrame().load(hdfname)
+        # data = pd.DataFrame().load(hdfname) # did work in 0.16, apparently not later...
+        data = pd.read_json(fname)
         return data
 
-    tab1 = table1()
-    tab2 = table2()
-    data = join(tab1, tab2)
-    data.save(hdfname)
-    #print tab1
-    #print tab2.ix[:,:5]
-    #print data.ix[-9:-1,5:-1]
+    # make and save it, if necessary
+    data = make_boxdecker2013_dataframe()
+    with open(fname, "w") as f:
+        f.write(data.to_json())
+
     return data
 
 def polar_stere(lon_w, lon_e, lat_s, lat_n, **kwargs):
