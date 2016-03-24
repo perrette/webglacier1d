@@ -96,61 +96,6 @@ def _load_data(coords, variable, dataset, maxshape=None, project_on_bamber=True)
 
     return dima 
 
-# def _load_data(coords, variable, dataset=None, maxshape=None):
-#     """ load data to be plotted, for a particular glacier 
-#     and a particular region
-#
-#     Parameter
-#     ---------
-#     coords : coordinate box in km (left, right, bottom, up)
-#         in the coordinate system from STANDARD_DATASET
-#     variable : variable to load
-#     dataset : data source, optional 
-#     maxshape : maximum shape of laoded data (sub-sampling when loading to save time)
-#     
-#     Returns
-#     -------
-#     DimArray instance
-#     """
-#     # convert to llx, lly, urx, ury in m
-#     l, r, b, u = np.array(coords)*1e3
-#     bbox = l,b,r,u
-#
-#     # All data from standard greenland dataset
-#     if dataset == 'standard_dataset':
-#         data = standard_dataset.load(variable).squeeze()
-#         data.dims = ('y','x')
-#         data = data[(data.y >= b) & (data.y<=u)][:,(data.x >= l) & (data.x<=r)]
-#
-#     # Bedrock topography
-#     elif variable in ('bedrock', 'surface', 'thickness'):
-#         ds = load_elevation(bbox, variable=variable, dataset=dataset, crs=CRS, maxshape=maxshape) #, variable=variable)
-#         data = ds[variable]
-#
-#     # Velocity
-#     elif variable in ('velocity_x', 'velocity_y','velocity_mag','velocity_angle'):
-#         velocity = load_velocity(bbox, dataset=dataset, crs=CRS, maxshape=maxshape)   # dataset='...'
-#         vx = velocity['vx']
-#         vy = velocity['vy']
-#         if variable == 'velocity_x': 
-#             data = vx
-#         elif variable == 'velocity_y': 
-#             data = vy
-#         elif variable == "velocity_mag":
-#             data = (vx**2 + vy**2)**0.5
-#             data.units = vx.units
-#             data.long_name = "velocity magnitude"
-#         elif variable == 'velocity_angle':
-#             data = np.arctan(vy/vx)*180/np.pi
-#             data.units = "degrees"
-#             data.long_name = "angle of the velocity vector from the horizontal (arctan(vy/vx)"
-#         else:
-#             raise NotImplementedError(variable + ' is not available')
-#
-#     else:
-#         raise NotImplementedError(variable + ' is not available')
-#
-#     return data
 
 def get_dict_data(variable, dataset, coords, zoom=300e3, maxshape=(200,200)):
     """ read data and return it as json format for the javascript plotting
@@ -179,12 +124,13 @@ def get_dict_data(variable, dataset, coords, zoom=300e3, maxshape=(200,200)):
     # extends x-axis to get appropriate aspect ratio (useful for velocity, which involves 
     # projections)
 
-    if variable == 'velocity_mag':
-        units = getattr(dim_a,"units","unknown").strip()
-        # dim_a = np.log(np.clip(dim_a, 1e-2, np.inf)) # remove zero numbers
-        # dim_a.units = "ln("+units+")"
-        dim_a = np.log10(np.clip(dim_a, 1e-2, np.inf)) # remove zero numbers
-        dim_a.units = "log10("+units+")"
+    # Leave normal units
+    # if variable == 'velocity_mag':
+    #     units = getattr(dim_a,"units","unknown").strip()
+    #     # dim_a = np.log(np.clip(dim_a, 1e-2, np.inf)) # remove zero numbers
+    #     # dim_a.units = "ln("+units+")"
+    #     dim_a = np.log10(np.clip(dim_a, 1e-2, np.inf)) # remove zero numbers
+    #     dim_a.units = "log10("+units+")"
 
     # prepare dictionary to update data source
     x = dim_a.axes[1].values*1e-3  # express in m
