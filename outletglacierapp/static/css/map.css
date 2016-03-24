@@ -107,12 +107,11 @@ svg .map
 .drawing path.link {
   stroke-opacity: 1;
   stroke-width: 3;
-  stroke : steelblue;
+  stroke : black;
 }
 
-/* Locations on the map */
 .drawing circle.node {
-  fill: steelblue;
+  fill: black;
   stroke: black;
   stroke-width: 0.001;
   fill-opacity: 1;
